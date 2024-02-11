@@ -12,11 +12,12 @@ List deriveTimeDifference(List<Map<String, String>> runTimes) {
       perTimes.add(runTimes[0]['run_time']);
       return perTimes.reversed.toList();
     }
-    if (runTimes[i]['symbol'] == 'SA') {
+    if (runTimes[i]['symbol'] == 'SA' || runTimes[i]['symbol'] == 'L') {
       perTimes.add("0:00");
       continue;
     }
-    if (runTimes[i - 1]['symbol'] == 'SA') {
+
+    if (runTimes[i - 1]['symbol'] == 'SA' || runTimes[i - 1]['symbol'] == 'L') {
       var result = formatDuration(calculateTimeDifference(
           runTimes[i]['run_time']!, runTimes[i - 2]['run_time']!));
       perTimes.add(result);

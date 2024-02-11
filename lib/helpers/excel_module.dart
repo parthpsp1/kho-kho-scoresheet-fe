@@ -1,16 +1,25 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
+import 'package:kho_kho_scoresheet/provider/scoresheet_provider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 import 'package:excel/excel.dart';
 import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
+import 'package:provider/provider.dart';
 
-void writeToExcel(List<Map<String, String>> scoreSheetData) async {
+void createExcel(List defenderAndAttacker, BuildContext context) async {
   Excel excel = Excel.createExcel();
   Sheet sheet = excel['Sheet1'];
   List<Map<String, String>> runTimes = [];
+  List<Map<String, dynamic>> scoreSheetData =
+      Provider.of<ScoresheetProvider>(context, listen: false).scoreSheetList;
 
   // Write headers
   sheet.cell(CellIndex.indexByString("A2")).value =
-      const TextCellValue("Defender Number");
+      TextCellValue("DEF (${defenderAndAttacker[0]}) No.");
   sheet.cell(CellIndex.indexByString("A3")).value =
-      const TextCellValue("Attacker Number");
+      TextCellValue("ATK (${defenderAndAttacker[1]}) No.");
   sheet.cell(CellIndex.indexByString("A4")).value =
       const TextCellValue("Run Time");
   sheet.cell(CellIndex.indexByString("A5")).value =
@@ -55,5 +64,23 @@ void writeToExcel(List<Map<String, String>> scoreSheetData) async {
     customColumnIndex++;
   }
 
-  excel.save(fileName: 'real_match_test.xlsx');
+  writeToExcel(excel);
+}
+
+void writeToExcel(Excel excel) async {
+  // if (Platform.isAndroid || Platform.isIOS) {
+  //   bool isPermissionGranted = await requestPermissions();
+  //   if (isPermissionGranted == true) {
+  //     var fileBytes = excel.save()!;
+
+  //     var directory = await getExternalStorageDirectory();
+  //     var filePath = join(directory!.path, 'test.xlsx');
+
+  //     File(filePath)
+  //       ..createSync(recursive: true)
+  //       ..writeAsBytesSync(fileBytes);
+  //   }
+  // } else {
+  excel.save(fileName: 'test.xlsx');
+  // }
 }

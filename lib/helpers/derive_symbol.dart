@@ -1,9 +1,8 @@
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 
-String deriveSymbol(double symbolSliderValue) {
-  int index = symbolSliderValue.toInt();
-  if (index >= 0 && index < symbolList.length) {
-    return symbolList[index];
+String deriveSymbol(int selectedSymbolIndex) {
+  if (selectedSymbolIndex >= 0 && selectedSymbolIndex < symbolList.length) {
+    return symbolList[selectedSymbolIndex];
   } else {
     return 'Invalid Index';
   }
