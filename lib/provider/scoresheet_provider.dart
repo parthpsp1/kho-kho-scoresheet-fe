@@ -2,16 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ScoresheetProvider extends ChangeNotifier {
-  final List<Map<String, dynamic>> _scoreSheetList = [];
+  final List<Map<String, dynamic>> _matchData = [];
 
-  List<Map<String, dynamic>> get scoreSheetList => _scoreSheetList;
+  List<Map<String, dynamic>> get matchScoreList => _matchData;
 
-  void addJsonObject(Map<String, dynamic> jsonObject) {
-    _scoreSheetList.add(jsonObject);
+  void addTurnData(List<Map<String, dynamic>> turnData, int turnCount) {
+    Map<String, dynamic> allTurnsMap = {};
+    allTurnsMap['$turnCount'] = turnData;
+    _matchData.add(allTurnsMap);
     notifyListeners();
   }
 
   List exportToJson() {
-    return _scoreSheetList;
+    return _matchData;
   }
 }

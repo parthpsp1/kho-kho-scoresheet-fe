@@ -5,7 +5,7 @@ String deriveFirstTimeDifference(int dataLength, data) {
   return 'Difference';
 }
 
-List deriveTimeDifference(List<Map<String, String>> runTimes) {
+List deriveTimeDifference(runTimes) {
   List perTimes = [];
   for (var i = runTimes.length - 1; i >= 0; i--) {
     if (i == 0) {

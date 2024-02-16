@@ -5,8 +5,10 @@ import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/derive_symbol.dart';
 import 'package:kho_kho_scoresheet/helpers/excel_module.dart';
+import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
-import 'package:kho_kho_scoresheet/provider/scoresheet_provider.dart';
+import 'package:kho_kho_scoresheet/screens/start_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:remix_icon_icons/remix_icon_icons.dart';
 
@@ -25,8 +27,14 @@ TextEditingController attackerFieldController = TextEditingController();
 String defenderFieldValue = "";
 String attackerFieldValue = "";
 int selectedSymbol = -1;
-bool isMatchTimeUp = false;
 String wicketTime = '';
+bool isTurnTimEnded = false;
+bool isWicketAdded = false;
+int turnCount = 0;
+
+Map<String, dynamic> singleTurnData = {};
+List<Map<String, dynamic>> allRunTimes = [];
+List<Map<String, dynamic>> matchData = [];
 
 void onDefenderFieldChange(defenderFieldValue) {
   defenderFieldValue = defenderFieldValue;
@@ -61,7 +69,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
         });
       } else {
         setState(() {
-          isMatchTimeUp = true;
+          isTurnTimEnded = true;
         });
       }
     }
@@ -72,7 +80,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
         });
       } else {
         setState(() {
-          isMatchTimeUp = true;
+          isTurnTimEnded = true;
         });
       }
     }
@@ -87,6 +95,16 @@ class _ScoreSheetState extends State<ScoreSheet> {
   bool isMatchStarted = false;
 
   @override
+  void initState() {
+    runRequestPermissions();
+    super.initState();
+  }
+
+  Future<void> runRequestPermissions() async {
+    await requestPermissions();
+  }
+
+  @override
   Widget build(BuildContext context) {
     int minutes = _secondsPassed ~/ 60;
     int seconds = _secondsPassed % 60;
@@ -98,6 +116,109 @@ class _ScoreSheetState extends State<ScoreSheet> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Kho-Kho Scoresheet'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+              child: IconButton(
+                color: Colors.white,
+                onPressed: () {
+                  showAdaptiveDialog(
+                    context: context,
+                    builder: (builder) {
+                      return AlertDialog.adaptive(
+                        title: const Text("End Match?"),
+                        content: const IntrinsicHeight(
+                          child: Text(
+                            "Do you really wish to end the match and export the match details to excel?",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: const ButtonStyle(
+                              overlayColor: MaterialStatePropertyAll(
+                                  ColorConstants.primaryOverlayColor),
+                            ),
+                            child: const Text(
+                              "No",
+                              style: TextStyle(
+                                color: Color.fromRGBO(17, 27, 47, 1),
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              createExcel(matchData, defenderAndAttacker);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const StartScreen(),
+                                ),
+                              );
+                              setState(() {
+                                turnCount = 0;
+                              });
+                            },
+                            style: const ButtonStyle(
+                              overlayColor: MaterialStatePropertyAll(
+                                  ColorConstants.primaryOverlayColor),
+                            ),
+                            child: const Text(
+                              "Confirm",
+                              style: TextStyle(
+                                color: Color.fromRGBO(17, 27, 47, 1),
+                              ),
+                            ),
+                          ),
+                        ],
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(18),
+                          ),
+                        ),
+                        titlePadding: const EdgeInsets.only(
+                          top: 20,
+                          left: 20,
+                          right: 20,
+                        ),
+                        titleTextStyle: const TextStyle(
+                          color: Color.fromRGBO(17, 47, 27, 1),
+                          fontSize: 21,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        contentPadding: const EdgeInsets.only(
+                          top: 10,
+                          left: 20,
+                          right: 20,
+                          bottom: 24,
+                        ),
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.white,
+                        actionsPadding: const EdgeInsets.only(
+                          bottom: 16,
+                          left: 20,
+                          right: 20,
+                          top: 10,
+                        ),
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(RemixIcon.close_outline),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -107,55 +228,20 @@ class _ScoreSheetState extends State<ScoreSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                isMatchTimeUp == true
-                    ? const Text(
-                        'Turn ended',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : Text(
-                        'The turn will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == 0 ? "7:00" : "9:00"} minutes',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                const SizedBox(
-                  height: 10,
+                Text(
+                  'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == 0 ? "7:00" : "9:00"} minutes',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                isMatchStarted == true
-                    ? Container()
-                    : SizedBox(
-                        height: 40,
-                        width: 120,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              isMatchStarted = true;
-                            });
-                            _timer = Timer.periodic(
-                              const Duration(seconds: 1),
-                              (Timer timer) => _updateTimer(
-                                timer,
-                                Provider.of<MatchDetailsProvider>(context,
-                                        listen: false)
-                                    .ageGroup,
-                              ),
-                            );
-                          },
-                          child: const Text('Start Turn'),
-                        ),
-                      ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
                       Icons.timer_outlined,
-                      size: 38,
+                      size: 28,
                     ),
                     const SizedBox(
                       width: 10,
@@ -176,19 +262,45 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 const SizedBox(
                   height: 8,
                 ),
-                SizedBox(
-                  height: 40,
-                  width: 160,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        wicketTime =
-                            '$minutes:${seconds < 10 ? '0' : ''}$seconds';
-                      });
-                    },
-                    child: const Text('Add Wicket (+)'),
-                  ),
-                ),
+                isMatchStarted == true
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    wicketTime =
+                                        '$minutes:${seconds < 10 ? '0' : ''}$seconds';
+                                    isWicketAdded = true;
+                                  });
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(RemixIcon.add_circle_outline),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      'Add Wicket',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox(
+                        height: 40,
+                      ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -222,7 +334,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         decoration: const InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 0,
-                            vertical: 16,
+                            vertical: 12,
                           ),
                           errorStyle: TextStyle(
                             color: ColorConstants.error,
@@ -265,7 +377,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             ),
                           ),
                         ),
-                        autofocus: true,
+                        autofocus: false,
                         maxLength: 2,
                         autocorrect: false,
                         enableSuggestions: false,
@@ -331,7 +443,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
                               horizontal: 0,
-                              vertical: 16,
+                              vertical: 12,
                             ),
                             errorStyle: TextStyle(
                               color: ColorConstants.error,
@@ -522,147 +634,187 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 const SizedBox(
                   height: 8,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      height: 40,
-                      width: 120,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          showAdaptiveDialog(
-                            context: context,
-                            builder: (builder) {
-                              return AlertDialog.adaptive(
-                                title: const Text("End Turn?"),
-                                content: const IntrinsicHeight(
-                                  child: Text(
-                                    "Please confirm end of turn",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    style: const ButtonStyle(
-                                      overlayColor: MaterialStatePropertyAll(
-                                          ColorConstants.primaryOverlayColor),
-                                    ),
-                                    child: const Text(
-                                      "No",
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(17, 27, 47, 1),
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      createExcel(defenderAndAttacker, context);
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ScoreSheet(),
+                isMatchStarted == true
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            height: 40,
+                            width: 120,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showAdaptiveDialog(
+                                  context: context,
+                                  builder: (builder) {
+                                    return AlertDialog.adaptive(
+                                      title: const Text("End Turn?"),
+                                      content: const IntrinsicHeight(
+                                        child: Text(
+                                          "Please confirm end of turn",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      );
-                                    },
-                                    style: const ButtonStyle(
-                                      overlayColor: MaterialStatePropertyAll(
-                                          ColorConstants.primaryOverlayColor),
-                                    ),
-                                    child: const Text(
-                                      "Confirm",
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(17, 27, 47, 1),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(18),
-                                  ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: const ButtonStyle(
+                                            overlayColor:
+                                                MaterialStatePropertyAll(
+                                                    ColorConstants
+                                                        .primaryOverlayColor),
+                                          ),
+                                          child: const Text(
+                                            "No",
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromRGBO(17, 27, 47, 1),
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            singleTurnData[turnCount
+                                                .toString()] = allRunTimes;
+                                            matchData.add(singleTurnData);
+                                            setState(() {
+                                              turnCount++;
+                                              allRunTimes = [];
+                                            });
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ScoreSheet(),
+                                              ),
+                                            );
+                                          },
+                                          style: const ButtonStyle(
+                                            overlayColor:
+                                                MaterialStatePropertyAll(
+                                                    ColorConstants
+                                                        .primaryOverlayColor),
+                                          ),
+                                          child: const Text(
+                                            "Confirm",
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromRGBO(17, 27, 47, 1),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(18),
+                                        ),
+                                      ),
+                                      titlePadding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                      ),
+                                      titleTextStyle: const TextStyle(
+                                        color: Color.fromRGBO(17, 47, 27, 1),
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      contentPadding: const EdgeInsets.only(
+                                        top: 10,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 24,
+                                      ),
+                                      backgroundColor: Colors.white,
+                                      surfaceTintColor: Colors.white,
+                                      actionsPadding: const EdgeInsets.only(
+                                        bottom: 16,
+                                        left: 20,
+                                        right: 20,
+                                        top: 10,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                  Color.fromARGB(255, 246, 163, 157),
                                 ),
-                                titlePadding: const EdgeInsets.only(
-                                  top: 20,
-                                  left: 20,
-                                  right: 20,
-                                ),
-                                titleTextStyle: const TextStyle(
-                                  color: Color.fromRGBO(17, 47, 27, 1),
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                contentPadding: const EdgeInsets.only(
-                                  top: 10,
-                                  left: 20,
-                                  right: 20,
-                                  bottom: 24,
-                                ),
-                                backgroundColor: Colors.white,
-                                surfaceTintColor: Colors.white,
-                                actionsPadding: const EdgeInsets.only(
-                                  bottom: 16,
-                                  left: 20,
-                                  right: 20,
-                                  top: 10,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                            Color.fromARGB(255, 246, 163, 157),
+                              ),
+                              child: const Text(
+                                'End Turn',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
                           ),
-                        ),
-                        child: const Text(
-                          'End Turn',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                      width: 120,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (isMatchStarted == true) {
-                            Map<String, String> entry = {
-                              "def_number": defenderFieldController.text,
-                              "atk_number": (selectedSymbol == 4 ||
-                                      selectedSymbol == 5 ||
-                                      selectedSymbol == 6 ||
-                                      selectedSymbol == 8 ||
-                                      selectedSymbol == 11 ||
-                                      selectedSymbol == 12)
-                                  ? '-'
-                                  : attackerFieldController.text,
-                              "run_time": wicketTime,
-                              "symbol": deriveSymbol(selectedSymbol),
-                            };
-                            Provider.of<ScoresheetProvider>(context,
-                                    listen: false)
-                                .addJsonObject(entry);
+                          isWicketAdded == true
+                              ? SizedBox(
+                                  height: 40,
+                                  width: 120,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (isMatchStarted == true) {
+                                        Map<String, String> singleRunTime = {
+                                          "def_number":
+                                              defenderFieldController.text,
+                                          "atk_number": (selectedSymbol == 4 ||
+                                                  selectedSymbol == 5 ||
+                                                  selectedSymbol == 6 ||
+                                                  selectedSymbol == 8 ||
+                                                  selectedSymbol == 11 ||
+                                                  selectedSymbol == 12)
+                                              ? '-'
+                                              : attackerFieldController.text,
+                                          "run_time": wicketTime,
+                                          "symbol":
+                                              deriveSymbol(selectedSymbol),
+                                        };
+                                        allRunTimes.add(singleRunTime);
+                                        setState(() {
+                                          defenderFieldController.clear();
+                                          attackerFieldController.clear();
+                                          selectedSymbol = -1;
+                                          wicketTime = '';
+                                          isWicketAdded = false;
+                                        });
+                                      } else {
+                                        null;
+                                      }
+                                    },
+                                    child: const Text('Enter Data'),
+                                  ),
+                                )
+                              : const SizedBox(
+                                  height: 40,
+                                  width: 120,
+                                ),
+                        ],
+                      )
+                    : SizedBox(
+                        height: 40,
+                        width: 120,
+                        child: ElevatedButton(
+                          onPressed: () {
                             setState(() {
-                              defenderFieldController.clear();
-                              attackerFieldController.clear();
-                              selectedSymbol = -1;
-                              wicketTime = '';
+                              isMatchStarted = true;
                             });
-                          } else {
-                            null;
-                          }
-                        },
-                        child: const Text('Enter Data'),
+                            _timer = Timer.periodic(
+                              const Duration(seconds: 1),
+                              (Timer timer) => _updateTimer(
+                                timer,
+                                Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .ageGroup,
+                              ),
+                            );
+                          },
+                          child: const Text('Start Turn'),
+                        ),
                       ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),
