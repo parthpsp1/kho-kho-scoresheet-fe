@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String deriveFirstTimeDifference(int dataLength, data) {
   if (dataLength == 0) {
     return 'No Difference';
@@ -44,4 +46,19 @@ String formatDuration(Duration duration) {
   String minutes = (duration.inMinutes % 60).toString();
   String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
   return '$minutes:$seconds';
+}
+
+String getDate() {
+  DateTime now = DateTime.now();
+  return DateFormat('dd MMM yyyy').format(now);
+}
+
+String getTime() {
+  DateTime now = DateTime.now();
+  return DateFormat('hh:mm a').format(now);
+}
+
+String getTimeDateForFileName() {
+  DateTime now = DateTime.now();
+  return DateFormat('yyyyMMdd_HHmmss').format(now);
 }

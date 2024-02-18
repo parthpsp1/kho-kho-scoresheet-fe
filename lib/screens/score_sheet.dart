@@ -8,9 +8,9 @@ import 'package:kho_kho_scoresheet/helpers/excel_module.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:remix_icon_icons/remix_icon_icons.dart';
+import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ScoreSheet extends StatefulWidget {
   const ScoreSheet({
@@ -21,9 +21,6 @@ class ScoreSheet extends StatefulWidget {
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
-TextEditingController defenderFieldController = TextEditingController();
-TextEditingController attackerFieldController = TextEditingController();
-
 String defenderFieldValue = "";
 String attackerFieldValue = "";
 int selectedSymbol = -1;
@@ -31,10 +28,13 @@ String wicketTime = '';
 bool isTurnTimEnded = false;
 bool isWicketAdded = false;
 int turnCount = 0;
-
+int selectedPlayerNumberIndex = 0;
+bool isMatchStarted = false;
 Map<String, dynamic> singleTurnData = {};
 List<Map<String, dynamic>> allRunTimes = [];
 List<Map<String, dynamic>> matchData = [];
+List teamAScore = [];
+List teamBScore = [];
 
 void onDefenderFieldChange(defenderFieldValue) {
   defenderFieldValue = defenderFieldValue;
@@ -92,10 +92,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
     super.dispose();
   }
 
-  bool isMatchStarted = false;
-
   @override
   void initState() {
+    _timer = Timer(Duration.zero, () {});
     runRequestPermissions();
     super.initState();
   }
@@ -115,155 +114,171 @@ class _ScoreSheetState extends State<ScoreSheet> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Kho-Kho Scoresheet'),
+        title: const Text(
+          'Kho-Kho Scoresheet',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        titleSpacing: 20,
+        automaticallyImplyLeading: false,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
-            child: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-              ),
-              child: IconButton(
-                color: Colors.white,
-                onPressed: () {
-                  showAdaptiveDialog(
-                    context: context,
-                    builder: (builder) {
-                      return AlertDialog.adaptive(
-                        title: const Text("End Match?"),
-                        content: const IntrinsicHeight(
-                          child: Text(
-                            "Do you really wish to end the match and export the match details to excel?",
+            child: TextButton(
+              onPressed: () {
+                showAdaptiveDialog(
+                  context: context,
+                  builder: (builder) {
+                    return AlertDialog.adaptive(
+                      title: const Text("End Match?"),
+                      content: const IntrinsicHeight(
+                        child: Text(
+                          "Do you really wish to end the match and export the match details to excel?",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: const ButtonStyle(
+                            overlayColor: MaterialStatePropertyAll(
+                                ColorConstants.primaryOverlayColor),
+                          ),
+                          child: const Text(
+                            "No",
                             style: TextStyle(
-                              fontSize: 16,
+                              color: Color.fromRGBO(17, 27, 47, 1),
                             ),
                           ),
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: const ButtonStyle(
-                              overlayColor: MaterialStatePropertyAll(
-                                  ColorConstants.primaryOverlayColor),
-                            ),
-                            child: const Text(
-                              "No",
-                              style: TextStyle(
-                                color: Color.fromRGBO(17, 27, 47, 1),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            createExcel(matchData, defenderAndAttacker);
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => const StartScreen(),
                               ),
+                              (Route<dynamic> route) => false,
+                            );
+                            if (defenderAndAttacker[0] == 'A') {
+                              teamAScore.add(allRunTimes.length - 1);
+                            }
+                            if (defenderAndAttacker[0] == 'B') {
+                              teamAScore.add(allRunTimes.length - 1);
+                            }
+                            setState(() {
+                              matchData = [];
+                              turnCount = 0;
+                            });
+                          },
+                          style: const ButtonStyle(
+                            overlayColor: MaterialStatePropertyAll(
+                                ColorConstants.primaryOverlayColor),
+                          ),
+                          child: const Text(
+                            "Confirm",
+                            style: TextStyle(
+                              color: Color.fromRGBO(17, 27, 47, 1),
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              createExcel(matchData, defenderAndAttacker);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const StartScreen(),
-                                ),
-                              );
-                              setState(() {
-                                turnCount = 0;
-                              });
-                            },
-                            style: const ButtonStyle(
-                              overlayColor: MaterialStatePropertyAll(
-                                  ColorConstants.primaryOverlayColor),
-                            ),
-                            child: const Text(
-                              "Confirm",
-                              style: TextStyle(
-                                color: Color.fromRGBO(17, 27, 47, 1),
-                              ),
-                            ),
-                          ),
-                        ],
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(18),
-                          ),
                         ),
-                        titlePadding: const EdgeInsets.only(
-                          top: 20,
-                          left: 20,
-                          right: 20,
+                      ],
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(18),
                         ),
-                        titleTextStyle: const TextStyle(
-                          color: Color.fromRGBO(17, 47, 27, 1),
-                          fontSize: 21,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        contentPadding: const EdgeInsets.only(
-                          top: 10,
-                          left: 20,
-                          right: 20,
-                          bottom: 24,
-                        ),
-                        backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
-                        actionsPadding: const EdgeInsets.only(
-                          bottom: 16,
-                          left: 20,
-                          right: 20,
-                          top: 10,
-                        ),
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(RemixIcon.close_outline),
+                      ),
+                      titlePadding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                      ),
+                      titleTextStyle: const TextStyle(
+                        color: Color.fromRGBO(17, 47, 27, 1),
+                        fontSize: 21,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      contentPadding: const EdgeInsets.only(
+                        top: 10,
+                        left: 20,
+                        right: 20,
+                        bottom: 24,
+                      ),
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      actionsPadding: const EdgeInsets.only(
+                        bottom: 16,
+                        left: 20,
+                        right: 20,
+                        top: 10,
+                      ),
+                    );
+                  },
+                );
+              },
+              style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.red),
+                foregroundColor: MaterialStatePropertyAll(Colors.white),
               ),
+              child: const Text('End Match'),
             ),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: PopScope(
-          canPop: false,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == 0 ? "7:00" : "9:00"} minutes',
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      body: PopScope(
+        canPop: false,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == 0 ? "7:00" : "9:00"} minutes',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.timer_outlined,
+                    size: 28,
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.timer_outlined,
-                      size: 28,
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    '$minutes:${seconds < 10 ? '0' : ''}$seconds',
+                    style: const TextStyle(
+                      fontSize: 46,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      '$minutes:${seconds < 10 ? '0' : ''}$seconds',
-                      style: const TextStyle(
-                        fontSize: 46,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                isMatchStarted == true
-                    ? Row(
+                  ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 1,
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              isMatchStarted == true
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Expanded(
@@ -297,18 +312,21 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             ),
                           ),
                         ],
-                      )
-                    : const SizedBox(
-                        height: 40,
                       ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    )
+                  : const SizedBox(
+                      height: 40,
+                    ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'DEF (${defenderAndAttacker[0]}) Number',
+                      'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -318,106 +336,49 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       width: 20,
                     ),
                     SizedBox(
-                      width: 80,
-                      child: TextFormField(
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r"^[0-9]+$"),
-                          )
-                        ],
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          onDefenderFieldChange(value);
+                      height: 40,
+                      width: 160,
+                      child: WheelChooser(
+                        onValueChanged: (s) {
+                          setState(() {
+                            defenderFieldValue = s.toString();
+                          });
                         },
-                        controller: defenderFieldController,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 0,
-                            vertical: 12,
-                          ),
-                          errorStyle: TextStyle(
-                            color: ColorConstants.error,
-                          ),
-                          counterText: '',
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            borderSide: BorderSide(
-                              width: 1,
-                              color: Colors.black,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            borderSide: BorderSide(
-                              width: 1,
-                              color: Colors.black,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            borderSide: BorderSide(
-                              width: 1,
-                              color: ColorConstants.error,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            borderSide: BorderSide(
-                              width: 1,
-                              color: ColorConstants.error,
-                            ),
-                          ),
+                        datas: List.generate(15, (index) => index + 1),
+                        horizontal: true,
+                        isInfinite: false,
+                        squeeze: 1,
+                        magnification: 1,
+                        selectTextStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        autofocus: false,
-                        maxLength: 2,
-                        autocorrect: false,
-                        enableSuggestions: false,
+                        unSelectTextStyle: const TextStyle(
+                          fontWeight: FontWeight.w100,
+                        ),
+                        startPosition: selectedPlayerNumberIndex,
+                        physics: const ClampingScrollPhysics(),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          defenderFieldController.clear();
-                        });
-                      },
-                      icon: const Icon(
-                        RemixIcon.close_outline,
-                        color: Colors.red,
-                      ),
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(
-                          Colors.white,
-                        ),
-                      ),
-                    )
                   ],
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                if (selectedSymbol != 4 &&
-                    selectedSymbol != 5 &&
-                    selectedSymbol != 6 &&
-                    selectedSymbol != 8 &&
-                    selectedSymbol != 11 &&
-                    selectedSymbol != 12)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              if (selectedSymbol != 4 &&
+                  selectedSymbol != 5 &&
+                  selectedSymbol != 6 &&
+                  selectedSymbol != 8 &&
+                  selectedSymbol != 11 &&
+                  selectedSymbol != 12)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'ATK (${defenderAndAttacker[1]}) Number',
+                        'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -427,98 +388,41 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         width: 20,
                       ),
                       SizedBox(
-                        width: 80,
-                        child: TextFormField(
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r"^[0-9]+$"),
-                            )
-                          ],
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {
-                            onAttackerFieldChange(value);
+                        height: 40,
+                        width: 160,
+                        child: WheelChooser(
+                          onValueChanged: (s) {
+                            setState(() {
+                              attackerFieldValue = s.toString();
+                            });
                           },
-                          controller: attackerFieldController,
-                          textAlign: TextAlign.center,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 0,
-                              vertical: 12,
-                            ),
-                            errorStyle: TextStyle(
-                              color: ColorConstants.error,
-                            ),
-                            counterText: '',
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.black,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.black,
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: ColorConstants.error,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: ColorConstants.error,
-                              ),
-                            ),
+                          datas: List.generate(15, (index) => index + 1),
+                          horizontal: true,
+                          isInfinite: false,
+                          squeeze: 1,
+                          magnification: 1,
+                          selectTextStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          maxLength: 2,
-                          autocorrect: false,
-                          enableSuggestions: false,
+                          unSelectTextStyle: const TextStyle(
+                            fontWeight: FontWeight.w100,
+                          ),
+                          startPosition: selectedPlayerNumberIndex,
+                          physics: const ClampingScrollPhysics(),
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            attackerFieldController.clear();
-                          });
-                        },
-                        icon: const Icon(
-                          RemixIcon.close_outline,
-                          color: Colors.red,
-                        ),
-                        style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                            Colors.white,
-                          ),
-                        ),
-                        tooltip: 'Clear',
-                      )
                     ],
-                  )
-                else
-                  const SizedBox(height: 48),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
+                  ),
+                )
+              else
+                const SizedBox(height: 48),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
@@ -528,48 +432,57 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      wicketTime,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          wicketTime = '';
-                        });
-                      },
-                      icon: const Icon(
-                        RemixIcon.close_outline,
-                        color: Colors.red,
-                      ),
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(
-                          Colors.white,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          wicketTime,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    )
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              wicketTime = '';
+                            });
+                          },
+                          icon: const Icon(
+                            RemixIcon.close_outline,
+                            color: Colors.red,
+                          ),
+                          style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-                const SizedBox(
-                  height: 8,
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              const Text(
+                'Symbol',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
-                const Text(
-                  'Symbol',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  height: 160,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  height: 140,
                   width: double.infinity,
                   child: GridView.count(
                     crossAxisCount: 7,
@@ -631,192 +544,359 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     }),
                   ),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                isMatchStarted == true
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            height: 40,
-                            width: 120,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                showAdaptiveDialog(
-                                  context: context,
-                                  builder: (builder) {
-                                    return AlertDialog.adaptive(
-                                      title: const Text("End Turn?"),
-                                      content: const IntrinsicHeight(
-                                        child: Text(
-                                          "Please confirm end of turn",
+              ),
+              isMatchStarted == true
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          height: 40,
+                          width: 120,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showAdaptiveDialog(
+                                context: context,
+                                builder: (builder) {
+                                  return AlertDialog.adaptive(
+                                    title: const Text("End Turn?"),
+                                    content: const IntrinsicHeight(
+                                      child: Text(
+                                        "Please confirm end of turn",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        style: const ButtonStyle(
+                                          overlayColor:
+                                              MaterialStatePropertyAll(
+                                                  ColorConstants
+                                                      .primaryOverlayColor),
+                                        ),
+                                        child: const Text(
+                                          "No",
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            color:
+                                                Color.fromRGBO(17, 27, 47, 1),
                                           ),
                                         ),
                                       ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          style: const ButtonStyle(
-                                            overlayColor:
-                                                MaterialStatePropertyAll(
-                                                    ColorConstants
-                                                        .primaryOverlayColor),
-                                          ),
-                                          child: const Text(
-                                            "No",
-                                            style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(17, 27, 47, 1),
-                                            ),
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          setState(() {
                                             singleTurnData[turnCount
                                                 .toString()] = allRunTimes;
                                             matchData.add(singleTurnData);
-                                            setState(() {
-                                              turnCount++;
-                                              allRunTimes = [];
-                                            });
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ScoreSheet(),
-                                              ),
-                                            );
-                                          },
-                                          style: const ButtonStyle(
-                                            overlayColor:
-                                                MaterialStatePropertyAll(
-                                                    ColorConstants
-                                                        .primaryOverlayColor),
-                                          ),
-                                          child: const Text(
-                                            "Confirm",
-                                            style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(17, 27, 47, 1),
+                                            turnCount++;
+                                            allRunTimes = [];
+                                            isMatchStarted = false;
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ScoreSheet(),
                                             ),
+                                          );
+                                        },
+                                        style: const ButtonStyle(
+                                          overlayColor:
+                                              MaterialStatePropertyAll(
+                                                  ColorConstants
+                                                      .primaryOverlayColor),
+                                        ),
+                                        child: const Text(
+                                          "Confirm",
+                                          style: TextStyle(
+                                            color:
+                                                Color.fromRGBO(17, 27, 47, 1),
                                           ),
                                         ),
-                                      ],
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(18),
-                                        ),
                                       ),
-                                      titlePadding: const EdgeInsets.only(
-                                        top: 20,
-                                        left: 20,
-                                        right: 20,
+                                    ],
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(18),
                                       ),
-                                      titleTextStyle: const TextStyle(
-                                        color: Color.fromRGBO(17, 47, 27, 1),
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      contentPadding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 20,
-                                        right: 20,
-                                        bottom: 24,
-                                      ),
-                                      backgroundColor: Colors.white,
-                                      surfaceTintColor: Colors.white,
-                                      actionsPadding: const EdgeInsets.only(
-                                        bottom: 16,
-                                        left: 20,
-                                        right: 20,
-                                        top: 10,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
-                                  Color.fromARGB(255, 246, 163, 157),
-                                ),
-                              ),
-                              child: const Text(
-                                'End Turn',
-                                style: TextStyle(color: Colors.black),
+                                    ),
+                                    titlePadding: const EdgeInsets.only(
+                                      top: 20,
+                                      left: 20,
+                                      right: 20,
+                                    ),
+                                    titleTextStyle: const TextStyle(
+                                      color: Color.fromRGBO(17, 47, 27, 1),
+                                      fontSize: 21,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    contentPadding: const EdgeInsets.only(
+                                      top: 10,
+                                      left: 20,
+                                      right: 20,
+                                      bottom: 24,
+                                    ),
+                                    backgroundColor: Colors.white,
+                                    surfaceTintColor: Colors.white,
+                                    actionsPadding: const EdgeInsets.only(
+                                      bottom: 16,
+                                      left: 20,
+                                      right: 20,
+                                      top: 10,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            style: const ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll(
+                                Color.fromRGBO(177, 50, 50, 1),
                               ),
                             ),
+                            child: const Text(
+                              'End Turn',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                          isWicketAdded == true
-                              ? SizedBox(
-                                  height: 40,
-                                  width: 120,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      if (isMatchStarted == true) {
-                                        Map<String, String> singleRunTime = {
-                                          "def_number":
-                                              defenderFieldController.text,
-                                          "atk_number": (selectedSymbol == 4 ||
-                                                  selectedSymbol == 5 ||
-                                                  selectedSymbol == 6 ||
-                                                  selectedSymbol == 8 ||
-                                                  selectedSymbol == 11 ||
-                                                  selectedSymbol == 12)
-                                              ? '-'
-                                              : attackerFieldController.text,
-                                          "run_time": wicketTime,
-                                          "symbol":
-                                              deriveSymbol(selectedSymbol),
-                                        };
-                                        allRunTimes.add(singleRunTime);
-                                        setState(() {
-                                          defenderFieldController.clear();
-                                          attackerFieldController.clear();
-                                          selectedSymbol = -1;
-                                          wicketTime = '';
-                                          isWicketAdded = false;
-                                        });
-                                      } else {
-                                        null;
-                                      }
-                                    },
-                                    child: const Text('Enter Data'),
-                                  ),
-                                )
-                              : const SizedBox(
-                                  height: 40,
-                                  width: 120,
-                                ),
-                        ],
-                      )
-                    : SizedBox(
-                        height: 40,
-                        width: 120,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              isMatchStarted = true;
-                            });
-                            _timer = Timer.periodic(
-                              const Duration(seconds: 1),
-                              (Timer timer) => _updateTimer(
-                                timer,
-                                Provider.of<MatchDetailsProvider>(context,
-                                        listen: false)
-                                    .ageGroup,
-                              ),
-                            );
-                          },
-                          child: const Text('Start Turn'),
                         ),
+                        isWicketAdded == true
+                            ? SizedBox(
+                                height: 40,
+                                width: 120,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (isMatchStarted == true &&
+                                        selectedSymbol != -1 &&
+                                        wicketTime != '') {
+                                      Map<String, String> singleRunTime = {
+                                        "def_number": defenderFieldValue == ''
+                                            ? "1"
+                                            : defenderFieldValue,
+                                        "atk_number": (selectedSymbol == 4 ||
+                                                selectedSymbol == 5 ||
+                                                selectedSymbol == 6 ||
+                                                selectedSymbol == 8 ||
+                                                selectedSymbol == 11 ||
+                                                selectedSymbol == 12)
+                                            ? '-'
+                                            : attackerFieldValue == ''
+                                                ? "1"
+                                                : attackerFieldValue,
+                                        "run_time": wicketTime,
+                                        "symbol": deriveSymbol(selectedSymbol),
+                                      };
+                                      allRunTimes.add(singleRunTime);
+                                      // if (defenderAndAttacker[0] == 'A') {
+                                      //   teamAScore.add((allRunTimes.length - 1)
+                                      //       .toString());
+                                      // }
+                                      // if (defenderAndAttacker[0] == 'B') {
+                                      //   teamBScore.add((allRunTimes.length - 1)
+                                      //       .toString());
+                                      // }
+                                      setState(() {
+                                        selectedPlayerNumberIndex = 0;
+                                        selectedSymbol = -1;
+                                        wicketTime = '';
+                                        isWicketAdded = false;
+                                      });
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          duration: Duration(seconds: 1),
+                                          content: Text(
+                                            'Data Entered',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          dismissDirection:
+                                              DismissDirection.horizontal,
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          duration: Duration(seconds: 1),
+                                          content: Text(
+                                            'Please select all the fields',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.red,
+                                          dismissDirection:
+                                              DismissDirection.horizontal,
+                                        ),
+                                      );
+                                      null;
+                                    }
+                                  },
+                                  child: const Text('Enter Data'),
+                                ),
+                              )
+                            : const SizedBox(
+                                height: 40,
+                                width: 120,
+                              ),
+                      ],
+                    )
+                  : SizedBox(
+                      height: 40,
+                      width: 120,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            isMatchStarted = true;
+                          });
+                          _timer = Timer.periodic(
+                            const Duration(seconds: 1),
+                            (Timer timer) => _updateTimer(
+                              timer,
+                              Provider.of<MatchDetailsProvider>(context,
+                                      listen: false)
+                                  .ageGroup,
+                            ),
+                          );
+                        },
+                        child: const Text('Start Turn'),
                       ),
-              ],
-            ),
+                    ),
+              const SizedBox(
+                height: 16,
+              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Container(
+              //       color: Colors.white,
+              //       padding: const EdgeInsets.symmetric(horizontal: 10),
+              //       child: Table(
+              //         defaultColumnWidth: const FixedColumnWidth(60),
+              //         border: TableBorder.all(color: Colors.black),
+              //         defaultVerticalAlignment:
+              //             TableCellVerticalAlignment.middle,
+              //         textBaseline: TextBaseline.alphabetic,
+              //         children: [
+              //           const TableRow(
+              //             children: [
+              //               Center(child: Text('Team')),
+              //               Center(child: Text('I')),
+              //               Center(child: Text('II')),
+              //               Center(child: Text('III')),
+              //               Center(child: Text('IV')),
+              //               Center(
+              //                 child: Text(
+              //                   'Total',
+              //                   style: TextStyle(
+              //                     fontWeight: FontWeight.bold,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //           TableRow(
+              //             children: [
+              //               const Center(child: Text('A')),
+              //               Center(
+              //                 child: Text(
+              //                   teamAScore.isNotEmpty
+              //                       ? teamAScore.elementAt(0)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               Center(
+              //                 child: Text(
+              //                   teamAScore.length > 1
+              //                       ? teamAScore.elementAt(1)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               Center(
+              //                 child: Text(
+              //                   teamAScore.length > 2
+              //                       ? teamAScore.elementAt(2)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               Center(
+              //                 child: Text(
+              //                   teamAScore.length > 3
+              //                       ? teamAScore.elementAt(3)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               const Center(
+              //                 child: Text(
+              //                   '10',
+              //                   style: TextStyle(
+              //                     fontWeight: FontWeight.bold,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //           TableRow(
+              //             children: [
+              //               const Center(child: Text('B')),
+              //               Center(
+              //                 child: Text(
+              //                   teamBScore.isNotEmpty
+              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               Center(
+              //                 child: Text(
+              //                   teamBScore.length == 1
+              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               Center(
+              //                 child: Text(
+              //                   teamBScore.length == 2
+              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               Center(
+              //                 child: Text(
+              //                   teamBScore.length == 3
+              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
+              //                       : '',
+              //                 ),
+              //               ),
+              //               const Center(
+              //                 child: Text(
+              //                   '10',
+              //                   style: TextStyle(
+              //                     fontWeight: FontWeight.bold,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ],
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // )
+            ],
           ),
         ),
       ),

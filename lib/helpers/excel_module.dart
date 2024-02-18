@@ -3,7 +3,6 @@ import 'package:path/path.dart';
 import 'package:excel/excel.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
-import 'package:path_provider/path_provider.dart';
 
 int excelColumn = 2;
 int customColumnIndex = 1;
@@ -52,6 +51,21 @@ void createExcel(
       if (i == 2) {
         customRowIndex = 16;
       }
+      if (i == 3) {
+        customRowIndex = 23;
+      }
+      if (i == 4) {
+        customRowIndex = 30;
+      }
+      if (i == 5) {
+        customRowIndex = 37;
+      }
+      if (i == 6) {
+        customRowIndex = 44;
+      }
+      if (i == 7) {
+        customRowIndex = 51;
+      }
       sheet
           .cell(CellIndex.indexByColumnRow(
               columnIndex: customColumnIndex, rowIndex: customRowIndex))
@@ -85,13 +99,30 @@ void createExcel(
     if (i == 1) {
       customRowIndex = 12;
     }
+    if (i == 2) {
+      customRowIndex = 19;
+    }
+    if (i == 3) {
+      customRowIndex = 26;
+    }
+    if (i == 4) {
+      customRowIndex = 33;
+    }
+    if (i == 5) {
+      customRowIndex = 40;
+    }
+    if (i == 6) {
+      customRowIndex = 47;
+    }
+    if (i == 7) {
+      customRowIndex = 54;
+    }
     for (var j = 0; j < derivedData.length; j++) {
       sheet
           .cell(CellIndex.indexByColumnRow(
               columnIndex: customColumnIndex, rowIndex: customRowIndex))
           .value = TextCellValue(derivedData[j]);
       customColumnIndex++;
-      print(derivedData);
     }
   }
   writeToExcel(excel);
@@ -102,14 +133,12 @@ void writeToExcel(Excel excel) async {
     bool isPermissionGranted = await requestPermissions();
     if (isPermissionGranted == true) {
       var fileBytes = excel.save()!;
-      String filePath =
-          join('/storage/emulated/0/Download/', 'mobile_test.xlsx');
+      String filePath = join('/storage/emulated/0/Download/',
+          '${getTimeDateForFileName()} scoresheet.xlsx');
 
       File(filePath)
         ..createSync(recursive: true)
         ..writeAsBytesSync(fileBytes);
-
-      print('File saved at: $filePath');
     }
   } else {
     excel.save(fileName: 'test.xlsx');

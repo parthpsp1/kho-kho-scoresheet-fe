@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
+import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/score_sheet.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,14 @@ class _StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kho-Kho Scoresheet'),
+        title: const Text(
+          'Kho-Kho Scoresheet',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        titleSpacing: 20,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -25,11 +33,38 @@ class _StartScreenState extends State<StartScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Text(
+                'Enter match details',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               const SizedBox(
                 height: 20,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text(
+                    'Date:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 40,
+                  ),
+                  Text(
+                    getDate(),
+                    style: const TextStyle(fontSize: 16),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
                 children: [
                   const Text(
                     'Age Group:',
@@ -37,6 +72,9 @@ class _StartScreenState extends State<StartScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(
+                    width: 20,
                   ),
                   FlutterToggleTab(
                     width: 60,
@@ -68,7 +106,6 @@ class _StartScreenState extends State<StartScreen> {
                 height: 20,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   const Text(
                     'Toss won by:',
@@ -76,6 +113,9 @@ class _StartScreenState extends State<StartScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(
+                    width: 20,
                   ),
                   FlutterToggleTab(
                     width: 40,
@@ -107,7 +147,6 @@ class _StartScreenState extends State<StartScreen> {
                 height: 20,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   const Text(
                     'Chose to:',
@@ -115,6 +154,9 @@ class _StartScreenState extends State<StartScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(
+                    width: 20,
                   ),
                   FlutterToggleTab(
                     width: 50,
