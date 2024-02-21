@@ -916,69 +916,71 @@ class _ScoreSheetState extends State<ScoreSheet> {
   }
 
   void writeScoreOnUI(attacker) {
-    if (turnCount == 0) {
-      if (attacker == 'A') {
-        teamATurn1Score.add(allRunTimes.length);
+    if (selectedSymbol != 11 && selectedSymbol != 12) {
+      if (turnCount == 0) {
+        if (attacker == 'A') {
+          teamATurn1Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn1Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn1Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 1) {
-      if (attacker == 'A') {
-        teamATurn1Score.add(allRunTimes.length);
+      if (turnCount == 1) {
+        if (attacker == 'A') {
+          teamATurn1Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn1Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn1Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 2) {
-      if (attacker == 'A') {
-        teamATurn2Score.add(allRunTimes.length);
+      if (turnCount == 2) {
+        if (attacker == 'A') {
+          teamATurn2Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn2Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn2Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 3) {
-      if (attacker == 'A') {
-        teamATurn2Score.add(allRunTimes.length);
+      if (turnCount == 3) {
+        if (attacker == 'A') {
+          teamATurn2Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn2Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn2Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 4) {
-      if (attacker == 'A') {
-        teamATurn3Score.add(allRunTimes.length);
+      if (turnCount == 4) {
+        if (attacker == 'A') {
+          teamATurn3Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn3Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn3Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 5) {
-      if (attacker == 'A') {
-        teamATurn3Score.add(allRunTimes.length);
+      if (turnCount == 5) {
+        if (attacker == 'A') {
+          teamATurn3Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn3Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn3Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 6) {
-      if (attacker == 'A') {
-        teamATurn4Score.add(allRunTimes.length);
+      if (turnCount == 6) {
+        if (attacker == 'A') {
+          teamATurn4Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn4Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn4Score.add(allRunTimes.length);
-      return;
-    }
-    if (turnCount == 7) {
-      if (attacker == 'A') {
-        teamATurn4Score.add(allRunTimes.length);
+      if (turnCount == 7) {
+        if (attacker == 'A') {
+          teamATurn4Score.add(allRunTimes.length);
+          return;
+        }
+        teamBTurn4Score.add(allRunTimes.length);
         return;
       }
-      teamBTurn4Score.add(allRunTimes.length);
-      return;
     }
   }
 
