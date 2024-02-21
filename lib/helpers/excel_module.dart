@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:excel/excel.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
+import 'package:path_provider/path_provider.dart';
 
 int excelColumn = 2;
 int customColumnIndex = 1;
@@ -129,9 +130,9 @@ void createExcel(
 }
 
 void writeToExcel(Excel excel) async {
-  if (Platform.isAndroid || Platform.isIOS) {
-    bool isPermissionGranted = await requestPermissions();
-    if (isPermissionGranted == true) {
+  bool isPermissionGranted = await requestPermissions();
+  if (isPermissionGranted == true) {
+    if (Platform.isAndroid) {
       var fileBytes = excel.save()!;
       String filePath = join('/storage/emulated/0/Download/',
           '${getTimeDateForFileName()} scoresheet.xlsx');
@@ -140,7 +141,21 @@ void writeToExcel(Excel excel) async {
         ..createSync(recursive: true)
         ..writeAsBytesSync(fileBytes);
     }
+    if (Platform.isIOS ||
+        Platform.isLinux ||
+        Platform.isMacOS ||
+        Platform.isWindows) {
+      final Directory? downloadsDir = await getDownloadsDirectory();
+      var fileBytes = excel.save()!;
+      String filePath =
+          join('$downloadsDir', '${getTimeDateForFileName()} scoresheet.xlsx');
+
+      File(filePath)
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(fileBytes);
+    }
   } else {
-    excel.save(fileName: 'test.xlsx');
+    //Platform is web
+    excel.save(fileName: '${getTimeDateForFileName()} scoresheet.xlsx');
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/derive_symbol.dart';
@@ -30,11 +29,23 @@ bool isWicketAdded = false;
 int turnCount = 0;
 int selectedPlayerNumberIndex = 0;
 bool isMatchStarted = false;
+
 Map<String, dynamic> singleTurnData = {};
+
 List<Map<String, dynamic>> allRunTimes = [];
 List<Map<String, dynamic>> matchData = [];
-List teamAScore = [];
-List teamBScore = [];
+
+List teamATotalScore = [];
+List teamATurn1Score = [];
+List teamATurn2Score = [];
+List teamATurn3Score = [];
+List teamATurn4Score = [];
+
+List teamBTotalScore = [];
+List teamBTurn1Score = [];
+List teamBTurn2Score = [];
+List teamBTurn3Score = [];
+List teamBTurn4Score = [];
 
 void onDefenderFieldChange(defenderFieldValue) {
   defenderFieldValue = defenderFieldValue;
@@ -167,15 +178,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               ),
                               (Route<dynamic> route) => false,
                             );
-                            if (defenderAndAttacker[0] == 'A') {
-                              teamAScore.add(allRunTimes.length - 1);
-                            }
-                            if (defenderAndAttacker[0] == 'B') {
-                              teamAScore.add(allRunTimes.length - 1);
-                            }
                             setState(() {
                               matchData = [];
                               turnCount = 0;
+                              isMatchStarted = false;
+                              clearAllScores();
                             });
                           },
                           style: const ButtonStyle(
@@ -238,9 +245,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 16,
-              ),
               Text(
                 'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == 0 ? "7:00" : "9:00"} minutes',
                 style: const TextStyle(
@@ -272,9 +276,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 color: Colors.grey,
                 thickness: 1,
               ),
-              const SizedBox(
-                height: 8,
-              ),
               isMatchStarted == true
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -283,7 +284,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         children: [
                           Expanded(
                             child: SizedBox(
-                              height: 50,
+                              height: 56,
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
@@ -318,7 +319,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       height: 40,
                     ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -364,7 +365,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               if (selectedSymbol != 4 &&
                   selectedSymbol != 5 &&
@@ -416,7 +417,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   ),
                 )
               else
-                const SizedBox(height: 48),
+                const SizedBox(height: 40),
               const SizedBox(
                 height: 10,
               ),
@@ -482,7 +483,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: SizedBox(
-                  height: 140,
+                  height: 100,
                   width: double.infinity,
                   child: GridView.count(
                     crossAxisCount: 7,
@@ -544,6 +545,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     }),
                   ),
                 ),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               isMatchStarted == true
                   ? Row(
@@ -690,14 +694,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                         "symbol": deriveSymbol(selectedSymbol),
                                       };
                                       allRunTimes.add(singleRunTime);
-                                      // if (defenderAndAttacker[0] == 'A') {
-                                      //   teamAScore.add((allRunTimes.length - 1)
-                                      //       .toString());
-                                      // }
-                                      // if (defenderAndAttacker[0] == 'B') {
-                                      //   teamBScore.add((allRunTimes.length - 1)
-                                      //       .toString());
-                                      // }
+                                      String attacker = turnCount.isEven
+                                          ? defenderAndAttacker[1]
+                                          : defenderAndAttacker[0];
+                                      writeScoreOnUI(attacker);
                                       setState(() {
                                         selectedPlayerNumberIndex = 0;
                                         selectedSymbol = -1;
@@ -779,127 +779,220 @@ class _ScoreSheetState extends State<ScoreSheet> {
               const SizedBox(
                 height: 16,
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Container(
-              //       color: Colors.white,
-              //       padding: const EdgeInsets.symmetric(horizontal: 10),
-              //       child: Table(
-              //         defaultColumnWidth: const FixedColumnWidth(60),
-              //         border: TableBorder.all(color: Colors.black),
-              //         defaultVerticalAlignment:
-              //             TableCellVerticalAlignment.middle,
-              //         textBaseline: TextBaseline.alphabetic,
-              //         children: [
-              //           const TableRow(
-              //             children: [
-              //               Center(child: Text('Team')),
-              //               Center(child: Text('I')),
-              //               Center(child: Text('II')),
-              //               Center(child: Text('III')),
-              //               Center(child: Text('IV')),
-              //               Center(
-              //                 child: Text(
-              //                   'Total',
-              //                   style: TextStyle(
-              //                     fontWeight: FontWeight.bold,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //           TableRow(
-              //             children: [
-              //               const Center(child: Text('A')),
-              //               Center(
-              //                 child: Text(
-              //                   teamAScore.isNotEmpty
-              //                       ? teamAScore.elementAt(0)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               Center(
-              //                 child: Text(
-              //                   teamAScore.length > 1
-              //                       ? teamAScore.elementAt(1)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               Center(
-              //                 child: Text(
-              //                   teamAScore.length > 2
-              //                       ? teamAScore.elementAt(2)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               Center(
-              //                 child: Text(
-              //                   teamAScore.length > 3
-              //                       ? teamAScore.elementAt(3)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               const Center(
-              //                 child: Text(
-              //                   '10',
-              //                   style: TextStyle(
-              //                     fontWeight: FontWeight.bold,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //           TableRow(
-              //             children: [
-              //               const Center(child: Text('B')),
-              //               Center(
-              //                 child: Text(
-              //                   teamBScore.isNotEmpty
-              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               Center(
-              //                 child: Text(
-              //                   teamBScore.length == 1
-              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               Center(
-              //                 child: Text(
-              //                   teamBScore.length == 2
-              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               Center(
-              //                 child: Text(
-              //                   teamBScore.length == 3
-              //                       ? teamBScore.elementAt(1)?.toString() ?? ''
-              //                       : '',
-              //                 ),
-              //               ),
-              //               const Center(
-              //                 child: Text(
-              //                   '10',
-              //                   style: TextStyle(
-              //                     fontWeight: FontWeight.bold,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           )
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // )
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Table(
+                      defaultColumnWidth: const FixedColumnWidth(60),
+                      border: TableBorder.all(color: Colors.black),
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        const TableRow(
+                          children: [
+                            Center(child: Text('Team')),
+                            Center(child: Text('I')),
+                            Center(child: Text('II')),
+                            Center(child: Text('III')),
+                            Center(child: Text('IV')),
+                            Center(
+                              child: Text(
+                                'Total',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Center(
+                              child: Text('A'),
+                            ),
+                            Center(
+                              child: Text(
+                                teamATurn1Score.isNotEmpty
+                                    ? teamATurn1Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                teamATurn2Score.isNotEmpty
+                                    ? teamATurn2Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                teamATurn3Score.isNotEmpty
+                                    ? teamATurn3Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                teamATurn4Score.isNotEmpty
+                                    ? teamATurn4Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                (teamATurn1Score.length +
+                                        teamATurn2Score.length +
+                                        teamATurn3Score.length +
+                                        teamATurn4Score.length)
+                                    .toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Center(
+                              child: Text('B'),
+                            ),
+                            Center(
+                              child: Text(
+                                teamBTurn1Score.isNotEmpty
+                                    ? teamBTurn1Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                teamBTurn2Score.isNotEmpty
+                                    ? teamBTurn2Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                teamBTurn3Score.isNotEmpty
+                                    ? teamBTurn3Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                teamBTurn4Score.isNotEmpty
+                                    ? teamBTurn4Score.length.toString()
+                                    : '',
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                (teamBTurn1Score.length +
+                                        teamBTurn2Score.length +
+                                        teamBTurn3Score.length +
+                                        teamBTurn4Score.length)
+                                    .toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void writeScoreOnUI(attacker) {
+    if (turnCount == 0) {
+      if (attacker == 'A') {
+        teamATurn1Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn1Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 1) {
+      if (attacker == 'A') {
+        teamATurn1Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn1Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 2) {
+      if (attacker == 'A') {
+        teamATurn2Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn2Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 3) {
+      if (attacker == 'A') {
+        teamATurn2Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn2Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 4) {
+      if (attacker == 'A') {
+        teamATurn3Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn3Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 5) {
+      if (attacker == 'A') {
+        teamATurn3Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn3Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 6) {
+      if (attacker == 'A') {
+        teamATurn4Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn4Score.add(allRunTimes.length);
+      return;
+    }
+    if (turnCount == 7) {
+      if (attacker == 'A') {
+        teamATurn4Score.add(allRunTimes.length);
+        return;
+      }
+      teamBTurn4Score.add(allRunTimes.length);
+      return;
+    }
+  }
+
+  void clearAllScores() {
+    teamATotalScore.clear();
+    teamATurn1Score.clear();
+    teamATurn2Score.clear();
+    teamATurn3Score.clear();
+    teamATurn4Score.clear();
+
+    teamBTotalScore.clear();
+    teamBTurn1Score.clear();
+    teamBTurn2Score.clear();
+    teamBTurn3Score.clear();
+    teamBTurn4Score.clear();
   }
 }
