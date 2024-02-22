@@ -35,13 +35,11 @@ Map<String, dynamic> singleTurnData = {};
 List<Map<String, dynamic>> allRunTimes = [];
 List<Map<String, dynamic>> matchData = [];
 
-List teamATotalScore = [];
 List teamATurn1Score = [];
 List teamATurn2Score = [];
 List teamATurn3Score = [];
 List teamATurn4Score = [];
 
-List teamBTotalScore = [];
 List teamBTurn1Score = [];
 List teamBTurn2Score = [];
 List teamBTurn3Score = [];
@@ -171,7 +169,18 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            createExcel(matchData, defenderAndAttacker);
+                            createExcel(
+                              matchData,
+                              defenderAndAttacker,
+                              teamATurn1Score,
+                              teamATurn2Score,
+                              teamATurn3Score,
+                              teamATurn4Score,
+                              teamBTurn1Score,
+                              teamBTurn2Score,
+                              teamBTurn3Score,
+                              teamBTurn4Score,
+                            );
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => const StartScreen(),
@@ -985,13 +994,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
   }
 
   void clearAllScores() {
-    teamATotalScore.clear();
     teamATurn1Score.clear();
     teamATurn2Score.clear();
     teamATurn3Score.clear();
     teamATurn4Score.clear();
 
-    teamBTotalScore.clear();
     teamBTurn1Score.clear();
     teamBTurn2Score.clear();
     teamBTurn3Score.clear();

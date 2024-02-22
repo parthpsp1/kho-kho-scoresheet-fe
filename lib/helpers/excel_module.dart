@@ -13,6 +13,14 @@ int turnCount = 0;
 void createExcel(
   List matchData,
   List defenderAndAttacker,
+  List teamATurn1Score,
+  List teamATurn2Score,
+  List teamATurn3Score,
+  List teamATurn4Score,
+  List teamBTurn1Score,
+  List teamBTurn2Score,
+  List teamBTurn3Score,
+  List teamBTurn4Score,
 ) async {
   Excel excel = Excel.createExcel();
   Sheet sheet = excel['Sheet1'];
@@ -38,6 +46,134 @@ void createExcel(
         const TextCellValue("Symbol");
     excelColumn += 2;
     turnCount++;
+  }
+
+  void writeMatchResult() {
+    customRowIndex += 4;
+    customColumnIndex = 0;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('Team');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('I');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('II');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('III');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('IV');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('Total');
+    customRowIndex++;
+
+    customColumnIndex = 0;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('A');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamATurn1Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamATurn2Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamATurn3Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamATurn4Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue((teamATurn1Score.length +
+            teamATurn2Score.length +
+            teamATurn3Score.length +
+            teamATurn4Score.length)
+        .toString());
+    customRowIndex++;
+
+    customColumnIndex = 0;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = const TextCellValue('B');
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamBTurn1Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamBTurn2Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamBTurn3Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(teamBTurn4Score.length.toString());
+    customColumnIndex++;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue((teamBTurn1Score.length +
+            teamBTurn2Score.length +
+            teamBTurn3Score.length +
+            teamBTurn4Score.length)
+        .toString());
+    customRowIndex + 2;
+
+    int teamATotalScore = (teamATurn1Score.length +
+            teamATurn2Score.length +
+            teamATurn3Score.length +
+            teamATurn4Score.length)
+        .toInt();
+    int teamBTotalScore = (teamBTurn1Score.length +
+            teamBTurn2Score.length +
+            teamBTurn3Score.length +
+            teamBTurn4Score.length)
+        .toInt();
+    customColumnIndex = 0;
+    customRowIndex += 2;
+    sheet
+        .cell(CellIndex.indexByColumnRow(
+            columnIndex: customColumnIndex, rowIndex: customRowIndex))
+        .value = TextCellValue(
+      teamATotalScore > teamBTotalScore
+          ? 'Team A won by ${teamATotalScore - teamBTotalScore} point(s)'
+          : 'Team B won by ${teamBTotalScore - teamATotalScore} point(s)',
+    );
   }
 
   for (var i = 0; i < matchData.length; i++) {
@@ -90,6 +226,7 @@ void createExcel(
       customColumnIndex++;
     }
   }
+
   for (var i = 0; i < matchData.length; i++) {
     List row = matchData[i][i.toString()];
     List derivedData = deriveTimeDifference(row);
@@ -126,6 +263,7 @@ void createExcel(
       customColumnIndex++;
     }
   }
+  writeMatchResult();
   writeToExcel(excel);
 }
 
