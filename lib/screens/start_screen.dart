@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
+import 'package:kho_kho_scoresheet/screens/about_screen.dart';
 import 'package:kho_kho_scoresheet/screens/score_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -365,6 +367,24 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AboutScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('About'),
+                  ),
+                ],
+              )
             ],
           ),
         ),
