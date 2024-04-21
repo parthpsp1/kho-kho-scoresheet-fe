@@ -1,0 +1,17 @@
+  flutter_launcher_icons:
+    android: "launcher_icon"
+    ios: true
+    image_path: "assets/app_icon/humans_of_kho_kho_v1.jpeg"
+    min_sdk_android: 21 # android min sdk min:16, default 21
+    web:
+      generate: true
+      image_path: "assets/app_icon/humans_of_kho_kho_v1.jpeg"
+      background_color: "#FFFFFF"
+      theme_color: "#0000FF"
+    windows:
+      generate: true
+      image_path: "assets/app_icon/humans_of_kho_kho_v1.jpeg"
+      icon_size: 48 # min:48, max:256, default: 48
+    macos:
+      generate: true
+      image_path: "assets/app_icon/humans_of_kho_kho_v1.jpeg"

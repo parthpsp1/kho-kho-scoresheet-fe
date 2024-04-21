@@ -18,10 +18,14 @@ class StartScreen extends StatefulWidget {
 
 TextEditingController teamANameController = TextEditingController();
 TextEditingController teamBNameController = TextEditingController();
+bool teamANameError = false;
+bool teamBNameError = false;
 
 class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
+    teamANameController.clear();
+    teamBNameController.clear();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -74,14 +78,15 @@ class _StartScreenState extends State<StartScreen> {
                   inputFormatters: [
                     customInputFormatters(),
                   ],
-                  decoration: const InputDecoration(
-                    label: Text('Team A Name'),
-                    border: OutlineInputBorder(
+                  decoration: InputDecoration(
+                    label: const Text('Team A Name'),
+                    border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
                     ),
                     counterText: '',
+                    errorText: teamANameError ? 'Enter Team A Name' : null,
                   ),
                   maxLength: 50,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -99,14 +104,15 @@ class _StartScreenState extends State<StartScreen> {
                   inputFormatters: [
                     customInputFormatters(),
                   ],
-                  decoration: const InputDecoration(
-                    label: Text('Team B Name'),
-                    border: OutlineInputBorder(
+                  decoration: InputDecoration(
+                    label: const Text('Team B Name'),
+                    border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
                     ),
                     counterText: '',
+                    errorText: teamBNameError ? 'Enter Team B Name' : null,
                   ),
                   maxLength: 50,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -269,183 +275,222 @@ class _StartScreenState extends State<StartScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showAdaptiveDialog(
-                              context: context,
-                              builder: (builder) {
-                                return AlertDialog.adaptive(
-                                  title: const Text("Create Match?"),
-                                  content: IntrinsicHeight(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          "Please confirm match details",
-                                          style: TextStyle(
-                                            fontSize: 16,
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (teamANameController.text.isNotEmpty &&
+                                  teamBNameController.text.isNotEmpty) {
+                                setState(() {
+                                  teamANameError = false;
+                                  teamBNameError = false;
+                                });
+                                showAdaptiveDialog(
+                                  context: context,
+                                  builder: (builder) {
+                                    return AlertDialog.adaptive(
+                                      title: const Text("Create Match?"),
+                                      content: IntrinsicHeight(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              "Please confirm match details",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                const Text(
+                                                  'Age group:',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  Provider.of<MatchDetailsProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .ageGroup ==
+                                                          0
+                                                      ? 'Under 14'
+                                                      : 'Under 18 / Open',
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                const Text(
+                                                  'Toss Winner:',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  Provider.of<MatchDetailsProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .tossWinner ==
+                                                          0
+                                                      ? 'Team A'
+                                                      : 'Team B',
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                const Text(
+                                                  'Choice:',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  Provider.of<MatchDetailsProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .defAtkChoice ==
+                                                          0
+                                                      ? 'Defense'
+                                                      : 'Attack',
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: const ButtonStyle(
+                                            overlayColor:
+                                                MaterialStatePropertyAll(
+                                                    ColorConstants
+                                                        .primaryOverlayColor),
+                                          ),
+                                          child: const Text(
+                                            "No",
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromRGBO(17, 27, 47, 1),
+                                            ),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text(
-                                              'Age group:',
-                                              style: TextStyle(
-                                                fontSize: 18,
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ScoreSheet(),
                                               ),
+                                            );
+                                          },
+                                          style: const ButtonStyle(
+                                            overlayColor:
+                                                MaterialStatePropertyAll(
+                                                    ColorConstants
+                                                        .primaryOverlayColor),
+                                            backgroundColor:
+                                                MaterialStatePropertyAll(
+                                              Colors.blue,
                                             ),
-                                            Text(
-                                              Provider.of<MatchDetailsProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .ageGroup ==
-                                                      0
-                                                  ? 'Under 14'
-                                                  : 'Under 18 / Open',
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
+                                          ),
+                                          child: const Text(
+                                            "Confirm",
+                                            style: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  255, 255, 255, 1),
                                             ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text(
-                                              'Toss Winner:',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                            Text(
-                                              Provider.of<MatchDetailsProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .tossWinner ==
-                                                      0
-                                                  ? 'Team A'
-                                                  : 'Team B',
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text(
-                                              'Choice:',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                            Text(
-                                              Provider.of<MatchDetailsProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .defAtkChoice ==
-                                                      0
-                                                  ? 'Defense'
-                                                  : 'Attack',
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      style: const ButtonStyle(
-                                        overlayColor: MaterialStatePropertyAll(
-                                            ColorConstants.primaryOverlayColor),
-                                      ),
-                                      child: const Text(
-                                        "No",
-                                        style: TextStyle(
-                                          color: Color.fromRGBO(17, 27, 47, 1),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(18),
                                         ),
                                       ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ScoreSheet(),
-                                          ),
-                                        );
-                                      },
-                                      style: const ButtonStyle(
-                                        overlayColor: MaterialStatePropertyAll(
-                                            ColorConstants.primaryOverlayColor),
+                                      titlePadding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
                                       ),
-                                      child: const Text(
-                                        "Confirm",
-                                        style: TextStyle(
-                                          color: Color.fromRGBO(17, 27, 47, 1),
-                                        ),
+                                      titleTextStyle: const TextStyle(
+                                        color: Color.fromRGBO(17, 47, 27, 1),
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                    ),
-                                  ],
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    ),
-                                  ),
-                                  titlePadding: const EdgeInsets.only(
-                                    top: 20,
-                                    left: 20,
-                                    right: 20,
-                                  ),
-                                  titleTextStyle: const TextStyle(
-                                    color: Color.fromRGBO(17, 47, 27, 1),
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  contentPadding: const EdgeInsets.only(
-                                    top: 10,
-                                    left: 20,
-                                    right: 20,
-                                    bottom: 24,
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  surfaceTintColor: Colors.white,
-                                  actionsPadding: const EdgeInsets.only(
-                                    bottom: 16,
-                                    left: 20,
-                                    right: 20,
-                                    top: 10,
-                                  ),
+                                      contentPadding: const EdgeInsets.only(
+                                        top: 10,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 24,
+                                      ),
+                                      backgroundColor: Colors.white,
+                                      surfaceTintColor: Colors.white,
+                                      actionsPadding: const EdgeInsets.only(
+                                        bottom: 16,
+                                        left: 20,
+                                        right: 20,
+                                        top: 10,
+                                      ),
+                                    );
+                                  },
                                 );
-                              },
-                            );
-                          },
-                          child: const Text('Create Match'),
+                              } else {
+                                if (teamANameController.text.isEmpty) {
+                                  setState(() {
+                                    teamANameError = true;
+                                  });
+                                }
+                                if (teamBNameController.text.isEmpty) {
+                                  setState(() {
+                                    teamBNameError = true;
+                                  });
+                                }
+                              }
+                            },
+                            child: const Text('Create Match'),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
