@@ -12,9 +12,7 @@ import 'package:remix_icon_icons/remix_icon_icons.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ScoreSheet extends StatefulWidget {
-  const ScoreSheet({
-    super.key,
-  });
+  const ScoreSheet({super.key});
 
   @override
   State<ScoreSheet> createState() => _ScoreSheetState();
@@ -105,7 +103,78 @@ class _ScoreSheetState extends State<ScoreSheet> {
   void initState() {
     _timer = Timer(Duration.zero, () {});
     runRequestPermissions();
+    showSelectAttackerDefenderDialog();
     super.initState();
+  }
+
+  void showSelectAttackerDefenderDialog() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      turnCount == 2
+          ? showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return PopScope(
+                  canPop: false,
+                  child: AlertDialog.adaptive(
+                    title: const Text('Choose Attacker'),
+                    content: const Text('Choose attacker for next turn'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            attackerFieldValue = 'Team A';
+                            defenderFieldValue = 'Team B';
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('A'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            attackerFieldValue = 'B';
+                            defenderFieldValue = 'A';
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('B'),
+                      ),
+                    ],
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(18),
+                      ),
+                    ),
+                    titlePadding: const EdgeInsets.only(
+                      top: 20,
+                      left: 20,
+                      right: 20,
+                    ),
+                    titleTextStyle: const TextStyle(
+                      color: Color.fromRGBO(17, 47, 27, 1),
+                      fontSize: 21,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    contentPadding: const EdgeInsets.only(
+                      top: 10,
+                      left: 20,
+                      right: 20,
+                      bottom: 24,
+                    ),
+                    backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    actionsPadding: const EdgeInsets.only(
+                      bottom: 16,
+                      left: 20,
+                      right: 20,
+                      top: 10,
+                    ),
+                  ),
+                );
+              },
+            )
+          : Container();
+    });
   }
 
   Future<void> runRequestPermissions() async {
@@ -193,6 +262,54 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               isMatchStarted = false;
                               clearAllScores();
                             });
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog.adaptive(
+                                  title: const Text('Exported Successfully'),
+                                  content: const Text(
+                                    'Excel exported to Downloads folder',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Okay'),
+                                    ),
+                                  ],
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(18),
+                                    ),
+                                  ),
+                                  titlePadding: const EdgeInsets.only(
+                                    top: 20,
+                                    left: 20,
+                                    right: 20,
+                                  ),
+                                  titleTextStyle: const TextStyle(
+                                    color: Color.fromRGBO(17, 47, 27, 1),
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  contentPadding: const EdgeInsets.only(
+                                    top: 10,
+                                    left: 20,
+                                    right: 20,
+                                    bottom: 24,
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  surfaceTintColor: Colors.white,
+                                  actionsPadding: const EdgeInsets.only(
+                                    bottom: 16,
+                                    left: 20,
+                                    right: 20,
+                                    top: 10,
+                                  ),
+                                );
+                              },
+                            );
                           },
                           style: const ButtonStyle(
                             overlayColor: MaterialStatePropertyAll(
@@ -284,6 +401,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
               const Divider(
                 color: Colors.grey,
                 thickness: 1,
+                indent: 20,
+                endIndent: 20,
               ),
               isMatchStarted == true
                   ? Padding(
@@ -335,13 +454,21 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    turnCount > 1
+                        ? Text(
+                            'DEF ($defenderFieldValue) Number',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
+                        : Text(
+                            'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                     const SizedBox(
                       width: 20,
                     ),
@@ -387,13 +514,21 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      turnCount > 1
+                          ? Text(
+                              'ATK ($attackerFieldValue) Number',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          : Text(
+                              'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                       const SizedBox(
                         width: 20,
                       ),
@@ -609,6 +744,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             turnCount++;
                                             allRunTimes = [];
                                             isMatchStarted = false;
+                                            String temp = attackerFieldValue;
+                                            attackerFieldValue =
+                                                defenderFieldValue;
+                                            defenderFieldValue = temp;
                                           });
                                           Navigator.of(context).push(
                                             MaterialPageRoute(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MatchDetailsProvider extends ChangeNotifier {
+  String teamAName;
+  String teamBName;
   int ageGroup;
   int tossWinner;
   int defAtkChoice;
@@ -9,7 +11,17 @@ class MatchDetailsProvider extends ChangeNotifier {
     this.ageGroup = 0,
     this.tossWinner = 0,
     this.defAtkChoice = 0,
+    this.teamAName = '',
+    this.teamBName = '',
   });
+
+  void updateTeamAName(String teamAName) {
+    this.teamAName = teamAName;
+  }
+
+  void updateTeamBName(String teamBName) {
+    this.teamBName = teamBName;
+  }
 
   void updateAgeGroup(int ageGroup) {
     this.ageGroup = ageGroup;
@@ -23,9 +35,11 @@ class MatchDetailsProvider extends ChangeNotifier {
     this.defAtkChoice = defAtkChoice;
   }
 
-  void clearData() {
+  void clearMatchData() {
     ageGroup = 0;
     tossWinner = 0;
     defAtkChoice = 0;
+    teamAName = '';
+    teamBName = '';
   }
 }

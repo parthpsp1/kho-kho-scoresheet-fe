@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kho_kho_scoresheet/helpers/url_handler.dart';
 import 'package:remix_icon_icons/remix_icon_icons.dart';
 
@@ -11,7 +9,13 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: const Text(
+          'About',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
       body: Center(
         child: Column(
@@ -24,7 +28,7 @@ class AboutScreen extends StatelessWidget {
                   text: const TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text: 'Thanks for using!',
+                        text: 'Thanks for using the app!',
                         style: TextStyle(
                           color: Color.fromARGB(255, 17, 27, 47),
                           fontSize: 30,
