@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:path/path.dart';
 import 'package:excel/excel.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 int excelColumn = 2;
 int customColumnIndex = 1;
@@ -11,6 +14,7 @@ int customRowIndex = 2;
 int turnCount = 0;
 
 void createExcel(
+  BuildContext context,
   List matchData,
   List defenderAndAttacker,
   List teamATurn1Score,
@@ -24,6 +28,10 @@ void createExcel(
 ) async {
   Excel excel = Excel.createExcel();
   Sheet sheet = excel['Sheet1'];
+  String teamAName =
+      Provider.of<MatchDetailsProvider>(context, listen: false).teamAName;
+  String teamBName =
+      Provider.of<MatchDetailsProvider>(context, listen: false).teamBName;
 
   void writeHeaders() {
     // Write headers
@@ -48,7 +56,7 @@ void createExcel(
     turnCount++;
   }
 
-  void writeMatchResult() {
+  void writeMatchResult(context) {
     customRowIndex += 4;
     customColumnIndex = 0;
     sheet
@@ -86,7 +94,7 @@ void createExcel(
     sheet
         .cell(CellIndex.indexByColumnRow(
             columnIndex: customColumnIndex, rowIndex: customRowIndex))
-        .value = const TextCellValue('A');
+        .value = TextCellValue(teamAName);
     customColumnIndex++;
     sheet
         .cell(CellIndex.indexByColumnRow(
@@ -122,7 +130,7 @@ void createExcel(
     sheet
         .cell(CellIndex.indexByColumnRow(
             columnIndex: customColumnIndex, rowIndex: customRowIndex))
-        .value = const TextCellValue('B');
+        .value = TextCellValue(teamBName);
     customColumnIndex++;
     sheet
         .cell(CellIndex.indexByColumnRow(
@@ -171,8 +179,8 @@ void createExcel(
             columnIndex: customColumnIndex, rowIndex: customRowIndex))
         .value = TextCellValue(
       teamATotalScore > teamBTotalScore
-          ? 'Team A won by ${teamATotalScore - teamBTotalScore} point(s)'
-          : 'Team B won by ${teamBTotalScore - teamATotalScore} point(s)',
+          ? '$teamAName won by ${teamATotalScore - teamBTotalScore} point(s)'
+          : '$teamBName won by ${teamBTotalScore - teamATotalScore} point(s)',
     );
   }
 
@@ -263,7 +271,7 @@ void createExcel(
       customColumnIndex++;
     }
   }
-  writeMatchResult();
+  writeMatchResult(context);
   writeToExcel(excel);
 }
 
@@ -286,7 +294,7 @@ void writeToExcel(Excel excel) async {
       final Directory? downloadsDir = await getDownloadsDirectory();
       var fileBytes = excel.save()!;
       String filePath =
-          join('$downloadsDir', '${getTimeDateForFileName()} scoresheet.xlsx');
+          join('$downloadsDir', '${getTimeDateForFileName()}_scoresheet.xlsx');
 
       File(filePath)
         ..createSync(recursive: true)
@@ -294,6 +302,6 @@ void writeToExcel(Excel excel) async {
     }
   } else {
     //Platform is web
-    excel.save(fileName: '${getTimeDateForFileName()} scoresheet.xlsx');
+    excel.save(fileName: '${getTimeDateForFileName()}_scoresheet.xlsx');
   }
 }

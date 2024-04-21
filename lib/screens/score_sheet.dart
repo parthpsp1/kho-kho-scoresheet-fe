@@ -239,6 +239,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           onPressed: () {
                             Navigator.of(context).pop();
                             createExcel(
+                              context,
                               matchData,
                               defenderAndAttacker,
                               teamATurn1Score,
