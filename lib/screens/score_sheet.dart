@@ -19,8 +19,8 @@ class ScoreSheet extends StatefulWidget {
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
-num defNumber = 0;
-num atkNumber = 0;
+num defNumber = 1;
+num atkNumber = 1;
 String defenderFieldValue = "";
 String attackerFieldValue = "";
 String wicketTime = '';
@@ -525,6 +525,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               totalCount: 12,
                               initValue: 1,
                               itemSize: 40,
+                              scrollPhysics: const FixedExtentScrollPhysics(),
                               currentIndex: defNumber,
                               customPointer: Container(
                                 decoration: BoxDecoration(
@@ -609,6 +610,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 initValue: 1,
                                 itemSize: 40,
                                 currentIndex: atkNumber,
+                                scrollPhysics: const FixedExtentScrollPhysics(),
                                 customPointer: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -922,13 +924,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             Map<String, String> singleRunTime =
                                                 {
                                               "def_number":
-                                                  defenderFieldValue == '' ||
-                                                          defenderFieldValue ==
-                                                              'A' ||
-                                                          defenderFieldValue ==
-                                                              'B'
-                                                      ? "1"
-                                                      : defenderFieldValue,
+                                                  defNumber.toString(),
                                               "atk_number": (selectedSymbol ==
                                                           4 ||
                                                       selectedSymbol == 5 ||
@@ -937,13 +933,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                       selectedSymbol == 11 ||
                                                       selectedSymbol == 12)
                                                   ? '-'
-                                                  : attackerFieldValue == '' ||
-                                                          attackerFieldValue ==
-                                                              'A' ||
-                                                          attackerFieldValue ==
-                                                              'B'
-                                                      ? "1"
-                                                      : attackerFieldValue,
+                                                  : atkNumber.toString(),
                                               "run_time": wicketTime,
                                               "symbol":
                                                   deriveSymbol(selectedSymbol),
