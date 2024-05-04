@@ -43,7 +43,7 @@ dependencies:
   rename: ^3.0.2
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.5
-  wheel_chooser: ^1.1.2
+  wheel_slider: ^1.2.1
 
 dev_dependencies:
 

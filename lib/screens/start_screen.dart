@@ -24,8 +24,6 @@ bool teamBNameError = false;
 class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
-    teamANameController.clear();
-    teamBNameController.clear();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -413,6 +411,8 @@ class _StartScreenState extends State<StartScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () async {
+                                            teamANameController.clear();
+                                            teamBNameController.clear();
                                             Navigator.of(context).pop();
                                             Navigator.of(context).push(
                                               MaterialPageRoute(

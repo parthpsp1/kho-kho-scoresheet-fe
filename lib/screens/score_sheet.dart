@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/derive_symbol.dart';
@@ -9,7 +10,7 @@ import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:remix_icon_icons/remix_icon_icons.dart';
-import 'package:wheel_chooser/wheel_chooser.dart';
+import 'package:wheel_slider/wheel_slider.dart';
 
 class ScoreSheet extends StatefulWidget {
   const ScoreSheet({super.key});
@@ -18,14 +19,15 @@ class ScoreSheet extends StatefulWidget {
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
+num defNumber = 0;
+num atkNumber = 0;
 String defenderFieldValue = "";
 String attackerFieldValue = "";
-int selectedSymbol = -1;
 String wicketTime = '';
+int selectedSymbol = -1;
+int turnCount = 0;
 bool isTurnTimEnded = false;
 bool isWicketAdded = false;
-int turnCount = 0;
-int selectedPlayerNumberIndex = 0;
 bool isMatchStarted = false;
 
 Map<String, dynamic> singleTurnData = {};
@@ -486,48 +488,79 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           turnCount > 1
-                              ? Text(
-                                  'DEF ($defenderFieldValue) Number',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
+                              ? Expanded(
+                                  flex: 4,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'DEF ($defenderFieldValue) Number',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 )
-                              : Text(
-                                  'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
+                              : Expanded(
+                                  flex: 4,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                           const SizedBox(
-                            width: 20,
+                            width: 10,
                           ),
-                          SizedBox(
-                            height: 40,
-                            width: 160,
-                            child: WheelChooser(
+                          Expanded(
+                            flex: 6,
+                            child: WheelSlider.number(
+                              totalCount: 12,
+                              initValue: 1,
+                              itemSize: 40,
+                              currentIndex: defNumber,
+                              customPointer: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color.fromRGBO(
+                                      10,
+                                      10,
+                                      10,
+                                      0.6,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              showPointer: true,
+                              unSelectedNumberStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                color: Colors.grey,
+                              ),
+                              selectedNumberStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                color: Colors.black,
+                              ),
                               onValueChanged: (s) {
                                 setState(() {
-                                  defenderFieldValue = s.toString();
+                                  defNumber = s;
                                 });
                               },
-                              datas: List.generate(15, (index) => index + 1),
+                              enableAnimation: false,
                               horizontal: true,
                               isInfinite: false,
                               squeeze: 1,
-                              magnification: 1,
-                              selectTextStyle: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              unSelectTextStyle: const TextStyle(
-                                fontWeight: FontWeight.w100,
-                              ),
-                              startPosition: selectedPlayerNumberIndex,
-                              physics: const ClampingScrollPhysics(),
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -546,48 +579,71 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             turnCount > 1
-                                ? Text(
-                                    'ATK ($attackerFieldValue) Number',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
+                                ? Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'ATK ($attackerFieldValue) Number',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   )
-                                : Text(
-                                    'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
+                                : Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                             const SizedBox(
-                              width: 20,
+                              width: 10,
                             ),
-                            SizedBox(
-                              height: 40,
-                              width: 160,
-                              child: WheelChooser(
+                            Expanded(
+                              flex: 6,
+                              child: WheelSlider.number(
+                                totalCount: 12,
+                                initValue: 1,
+                                itemSize: 40,
+                                currentIndex: atkNumber,
+                                customPointer: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: const Color.fromRGBO(
+                                        10,
+                                        10,
+                                        10,
+                                        0.6,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                showPointer: true,
+                                unSelectedNumberStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  color: Colors.grey,
+                                ),
+                                selectedNumberStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  color: Colors.black,
+                                ),
                                 onValueChanged: (s) {
                                   setState(() {
-                                    attackerFieldValue = s.toString();
+                                    atkNumber = s;
                                   });
                                 },
-                                datas: List.generate(15, (index) => index + 1),
+                                enableAnimation: false,
                                 horizontal: true,
                                 isInfinite: false,
                                 squeeze: 1,
-                                magnification: 1,
-                                selectTextStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                unSelectTextStyle: const TextStyle(
-                                  fontWeight: FontWeight.w100,
-                                ),
-                                startPosition: selectedPlayerNumberIndex,
-                                physics: const ClampingScrollPhysics(),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       )
@@ -898,7 +954,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                 : defenderAndAttacker[0];
                                             writeScoreOnUI(attacker);
                                             setState(() {
-                                              selectedPlayerNumberIndex = 0;
                                               selectedSymbol = -1;
                                               wicketTime = '';
                                               isWicketAdded = false;
@@ -995,129 +1050,125 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          color: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Table(
-                            defaultColumnWidth: const FixedColumnWidth(60),
-                            border: TableBorder.all(color: Colors.black),
-                            defaultVerticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              const TableRow(
-                                children: [
-                                  Center(child: Text('Team')),
-                                  Center(child: Text('I')),
-                                  Center(child: Text('II')),
-                                  Center(child: Text('III')),
-                                  Center(child: Text('IV')),
-                                  Center(
-                                    child: Text(
-                                      'Total',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                        Table(
+                          defaultColumnWidth: const FixedColumnWidth(60),
+                          border: TableBorder.all(color: Colors.black),
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            const TableRow(
+                              children: [
+                                Center(child: Text('Team')),
+                                Center(child: Text('I')),
+                                Center(child: Text('II')),
+                                Center(child: Text('III')),
+                                Center(child: Text('IV')),
+                                Center(
+                                  child: Text(
+                                    'Total',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  const Center(
-                                    child: Text('A'),
+                                ),
+                              ],
+                            ),
+                            TableRow(
+                              children: [
+                                const Center(
+                                  child: Text('A'),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamATurn1Score.isNotEmpty
+                                        ? teamATurn1Score.length.toString()
+                                        : '',
                                   ),
-                                  Center(
-                                    child: Text(
-                                      teamATurn1Score.isNotEmpty
-                                          ? teamATurn1Score.length.toString()
-                                          : '',
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamATurn2Score.isNotEmpty
+                                        ? teamATurn2Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamATurn3Score.isNotEmpty
+                                        ? teamATurn3Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamATurn4Score.isNotEmpty
+                                        ? teamATurn4Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    (teamATurn1Score.length +
+                                            teamATurn2Score.length +
+                                            teamATurn3Score.length +
+                                            teamATurn4Score.length)
+                                        .toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Center(
-                                    child: Text(
-                                      teamATurn2Score.isNotEmpty
-                                          ? teamATurn2Score.length.toString()
-                                          : '',
+                                ),
+                              ],
+                            ),
+                            TableRow(
+                              children: [
+                                const Center(
+                                  child: Text('B'),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamBTurn1Score.isNotEmpty
+                                        ? teamBTurn1Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamBTurn2Score.isNotEmpty
+                                        ? teamBTurn2Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamBTurn3Score.isNotEmpty
+                                        ? teamBTurn3Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    teamBTurn4Score.isNotEmpty
+                                        ? teamBTurn4Score.length.toString()
+                                        : '',
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    (teamBTurn1Score.length +
+                                            teamBTurn2Score.length +
+                                            teamBTurn3Score.length +
+                                            teamBTurn4Score.length)
+                                        .toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Center(
-                                    child: Text(
-                                      teamATurn3Score.isNotEmpty
-                                          ? teamATurn3Score.length.toString()
-                                          : '',
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      teamATurn4Score.isNotEmpty
-                                          ? teamATurn4Score.length.toString()
-                                          : '',
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      (teamATurn1Score.length +
-                                              teamATurn2Score.length +
-                                              teamATurn3Score.length +
-                                              teamATurn4Score.length)
-                                          .toString(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  const Center(
-                                    child: Text('B'),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      teamBTurn1Score.isNotEmpty
-                                          ? teamBTurn1Score.length.toString()
-                                          : '',
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      teamBTurn2Score.isNotEmpty
-                                          ? teamBTurn2Score.length.toString()
-                                          : '',
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      teamBTurn3Score.isNotEmpty
-                                          ? teamBTurn3Score.length.toString()
-                                          : '',
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      teamBTurn4Score.isNotEmpty
-                                          ? teamBTurn4Score.length.toString()
-                                          : '',
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      (teamBTurn1Score.length +
-                                              teamBTurn2Score.length +
-                                              teamBTurn3Score.length +
-                                              teamBTurn4Score.length)
-                                          .toString(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
                       ],
                     )
