@@ -43,8 +43,8 @@ dependencies:
   rename: ^3.0.2
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.5
-  wheel_slider: ^1.2.1
-
+  wheel_chooser: ^1.1.2
+  
 dev_dependencies:
 
   # The "flutter_lints" package below contains a set of recommended lints to

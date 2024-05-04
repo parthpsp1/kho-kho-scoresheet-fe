@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/derive_symbol.dart';
@@ -10,7 +9,7 @@ import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:remix_icon_icons/remix_icon_icons.dart';
-import 'package:wheel_slider/wheel_slider.dart';
+import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ScoreSheet extends StatefulWidget {
   const ScoreSheet({super.key});
@@ -485,83 +484,52 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          turnCount > 1
-                              ? Expanded(
-                                  flex: 4,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'DEF ($defenderFieldValue) Number',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
+                          Expanded(
+                            flex: 4,
+                            child: turnCount > 1
+                                ? Text(
+                                    'DEF ($defenderFieldValue) Number',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                                : Text(
+                                    'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                )
-                              : Expanded(
-                                  flex: 4,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                          ),
                           const SizedBox(
                             width: 10,
                           ),
                           Expanded(
-                            flex: 6,
-                            child: WheelSlider.number(
-                              totalCount: 12,
-                              initValue: 1,
-                              itemSize: 40,
-                              scrollPhysics: const FixedExtentScrollPhysics(),
-                              currentIndex: defNumber,
-                              customPointer: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color.fromRGBO(
-                                      10,
-                                      10,
-                                      10,
-                                      0.6,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              showPointer: true,
-                              unSelectedNumberStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                                color: Colors.grey,
-                              ),
-                              selectedNumberStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                                color: Colors.black,
-                              ),
+                            flex: 1,
+                            child: WheelChooser(
                               onValueChanged: (s) {
                                 setState(() {
                                   defNumber = s;
                                 });
                               },
-                              enableAnimation: false,
+                              datas: List.generate(15, (index) => index + 1),
                               horizontal: true,
                               isInfinite: false,
                               squeeze: 1,
+                              magnification: 1,
+                              selectTextStyle: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              unSelectTextStyle: const TextStyle(
+                                fontWeight: FontWeight.w100,
+                              ),
+                              startPosition: 1,
+                              physics: const ClampingScrollPhysics(),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -577,75 +545,53 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            turnCount > 1
-                                ? Expanded(
-                                    flex: 4,
-                                    child: Text(
-                                      'ATK ($attackerFieldValue) Number',
+                            Expanded(
+                              flex: 4,
+                              child: turnCount > 1
+                                  ? Text(
+                                      'DEF ($defenderFieldValue) Number',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  : Text(
+                                      'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                  )
-                                : Expanded(
-                                    flex: 4,
-                                    child: Text(
-                                      'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
+                            ),
                             const SizedBox(
                               width: 10,
                             ),
                             Expanded(
-                              flex: 6,
-                              child: WheelSlider.number(
-                                totalCount: 12,
-                                initValue: 1,
-                                itemSize: 40,
-                                currentIndex: atkNumber,
-                                scrollPhysics: const FixedExtentScrollPhysics(),
-                                customPointer: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color.fromRGBO(
-                                        10,
-                                        10,
-                                        10,
-                                        0.6,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                showPointer: true,
-                                unSelectedNumberStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  color: Colors.grey,
-                                ),
-                                selectedNumberStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  color: Colors.black,
-                                ),
+                              flex: 1,
+                              //To solve the infinite width problem for wheel chooser, should be solved using a sized box
+                              child: WheelChooser(
                                 onValueChanged: (s) {
                                   setState(() {
                                     atkNumber = s;
                                   });
                                 },
-                                enableAnimation: false,
+                                datas: List.generate(15, (index) => index + 1),
                                 horizontal: true,
                                 isInfinite: false,
                                 squeeze: 1,
+                                magnification: 1,
+                                selectTextStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                unSelectTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.w100,
+                                ),
+                                startPosition: 1,
+                                physics: const ClampingScrollPhysics(),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       )
