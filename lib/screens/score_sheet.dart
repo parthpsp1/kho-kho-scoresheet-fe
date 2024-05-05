@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/derive_symbol.dart';
@@ -507,27 +508,32 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             width: 10,
                           ),
                           Expanded(
-                            flex: 1,
-                            child: WheelChooser(
-                              onValueChanged: (s) {
-                                setState(() {
-                                  defNumber = s;
-                                });
-                              },
-                              datas: List.generate(15, (index) => index + 1),
-                              horizontal: true,
-                              isInfinite: false,
-                              squeeze: 1,
-                              magnification: 1,
-                              selectTextStyle: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                            flex: 6,
+                            child: SizedBox(
+                              height: 40,
+                              width: 400,
+                              child: WheelChooser(
+                                onValueChanged: (s) {
+                                  setState(() {
+                                    defNumber = s;
+                                  });
+                                },
+                                datas: List.generate(15, (index) => index + 1),
+                                horizontal: true,
+                                isInfinite: false,
+                                magnification: 1,
+                                selectTextStyle: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                unSelectTextStyle: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color.fromRGBO(180, 180, 180, 1),
+                                ),
+                                startPosition: 1,
+                                physics: const ClampingScrollPhysics(),
                               ),
-                              unSelectTextStyle: const TextStyle(
-                                fontWeight: FontWeight.w100,
-                              ),
-                              startPosition: 1,
-                              physics: const ClampingScrollPhysics(),
                             ),
                           ),
                         ],
@@ -550,14 +556,14 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               flex: 4,
                               child: turnCount > 1
                                   ? Text(
-                                      'DEF ($defenderFieldValue) Number',
+                                      'ATK ($attackerFieldValue) Number',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     )
                                   : Text(
-                                      'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
+                                      'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
@@ -568,30 +574,35 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               width: 10,
                             ),
                             Expanded(
-                              flex: 1,
-                              //To solve the infinite width problem for wheel chooser, should be solved using a sized box
-                              child: WheelChooser(
-                                onValueChanged: (s) {
-                                  setState(() {
-                                    atkNumber = s;
-                                  });
-                                },
-                                datas: List.generate(15, (index) => index + 1),
-                                horizontal: true,
-                                isInfinite: false,
-                                squeeze: 1,
-                                magnification: 1,
-                                selectTextStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              flex: 6,
+                              child: SizedBox(
+                                height: 40,
+                                width: 400,
+                                child: WheelChooser(
+                                  onValueChanged: (s) {
+                                    setState(() {
+                                      atkNumber = s;
+                                    });
+                                  },
+                                  datas:
+                                      List.generate(15, (index) => index + 1),
+                                  horizontal: true,
+                                  isInfinite: false,
+                                  magnification: 1,
+                                  selectTextStyle: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  unSelectTextStyle: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromRGBO(180, 180, 180, 1),
+                                  ),
+                                  startPosition: 1,
+                                  physics: const ClampingScrollPhysics(),
                                 ),
-                                unSelectTextStyle: const TextStyle(
-                                  fontWeight: FontWeight.w100,
-                                ),
-                                startPosition: 1,
-                                physics: const ClampingScrollPhysics(),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       )
@@ -618,7 +629,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               Text(
                                 wicketTime,
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
