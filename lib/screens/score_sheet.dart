@@ -263,6 +263,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               matchData = [];
                               turnCount = 0;
                               isMatchStarted = false;
+                              isWicketAdded = false;
+                              selectedSymbol = -1;
                               clearAllScores();
                             });
                             showDialog(
@@ -531,7 +533,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   fontWeight: FontWeight.w400,
                                   color: Color.fromRGBO(180, 180, 180, 1),
                                 ),
-                                startPosition: 1,
+                                startPosition: 0,
                                 physics: const ClampingScrollPhysics(),
                               ),
                             ),
@@ -598,7 +600,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(180, 180, 180, 1),
                                   ),
-                                  startPosition: 1,
+                                  startPosition: 0,
                                   physics: const ClampingScrollPhysics(),
                                 ),
                               ),
@@ -789,6 +791,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
+                                                  selectedSymbol = -1;
                                                   singleTurnData[turnCount
                                                           .toString()] =
                                                       allRunTimes;
@@ -796,6 +799,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                   turnCount++;
                                                   allRunTimes = [];
                                                   isMatchStarted = false;
+                                                  isWicketAdded = false;
                                                   String temp =
                                                       attackerFieldValue;
                                                   attackerFieldValue =
