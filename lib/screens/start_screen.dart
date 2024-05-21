@@ -397,7 +397,7 @@ class _StartScreenState extends State<StartScreen> {
                                           },
                                           style: const ButtonStyle(
                                             overlayColor:
-                                                MaterialStatePropertyAll(
+                                                WidgetStatePropertyAll(
                                                     ColorConstants
                                                         .primaryOverlayColor),
                                           ),
@@ -423,11 +423,11 @@ class _StartScreenState extends State<StartScreen> {
                                           },
                                           style: const ButtonStyle(
                                             overlayColor:
-                                                MaterialStatePropertyAll(
+                                                WidgetStatePropertyAll(
                                                     ColorConstants
                                                         .primaryOverlayColor),
                                             backgroundColor:
-                                                MaterialStatePropertyAll(
+                                                WidgetStatePropertyAll(
                                               Colors.blue,
                                             ),
                                           ),
