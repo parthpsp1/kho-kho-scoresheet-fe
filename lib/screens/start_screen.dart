@@ -49,8 +49,9 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 );
               },
-              icon: const Icon(Icons.help_outline_outlined),
+              icon: const Icon(Icons.info_outline),
               label: const Text('About'),
+              iconAlignment: IconAlignment.end,
             ),
           ),
         ],
@@ -163,6 +164,10 @@ class _StartScreenState extends State<StartScreen> {
                       width: 20,
                     ),
                     FlutterToggleTab(
+                      dataTabs: [
+                        DataTab(title: 'U-14'),
+                        DataTab(title: 'U-18/Open')
+                      ],
                       width: 60,
                       borderRadius: 12,
                       selectedBackgroundColors: const [Colors.blue],
@@ -174,7 +179,6 @@ class _StartScreenState extends State<StartScreen> {
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w400),
-                      labels: const ['U-14', 'U-18/Open'],
                       selectedIndex: Provider.of<MatchDetailsProvider>(context,
                               listen: false)
                           .ageGroup,
@@ -205,6 +209,7 @@ class _StartScreenState extends State<StartScreen> {
                       width: 20,
                     ),
                     FlutterToggleTab(
+                      dataTabs: [DataTab(title: 'A'), DataTab(title: 'B')],
                       width: 40,
                       borderRadius: 12,
                       selectedBackgroundColors: const [Colors.blue],
@@ -216,7 +221,6 @@ class _StartScreenState extends State<StartScreen> {
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w400),
-                      labels: const ['A', 'B'],
                       selectedIndex: Provider.of<MatchDetailsProvider>(context,
                               listen: false)
                           .tossWinner,
@@ -247,6 +251,7 @@ class _StartScreenState extends State<StartScreen> {
                       width: 20,
                     ),
                     FlutterToggleTab(
+                      dataTabs: [DataTab(title: 'DEF'), DataTab(title: 'ATK')],
                       width: 50,
                       borderRadius: 12,
                       selectedBackgroundColors: const [Colors.blue],
@@ -258,7 +263,6 @@ class _StartScreenState extends State<StartScreen> {
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w400),
-                      labels: const ['DEF', 'ATK'],
                       selectedIndex: Provider.of<MatchDetailsProvider>(context,
                               listen: false)
                           .defAtkChoice,
@@ -399,7 +403,7 @@ class _StartScreenState extends State<StartScreen> {
                                           },
                                           style: const ButtonStyle(
                                             overlayColor:
-                                                MaterialStatePropertyAll(
+                                                WidgetStatePropertyAll(
                                                     ColorConstants
                                                         .primaryOverlayColor),
                                           ),
@@ -423,11 +427,11 @@ class _StartScreenState extends State<StartScreen> {
                                           },
                                           style: const ButtonStyle(
                                             overlayColor:
-                                                MaterialStatePropertyAll(
+                                                WidgetStatePropertyAll(
                                                     ColorConstants
                                                         .primaryOverlayColor),
                                             backgroundColor:
-                                                MaterialStatePropertyAll(
+                                                WidgetStatePropertyAll(
                                               Colors.blue,
                                             ),
                                           ),

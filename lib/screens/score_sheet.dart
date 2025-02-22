@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
@@ -225,7 +226,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             Navigator.pop(context);
                           },
                           style: const ButtonStyle(
-                            overlayColor: MaterialStatePropertyAll(
+                            overlayColor: WidgetStatePropertyAll(
                                 ColorConstants.primaryOverlayColor),
                           ),
                           child: const Text(
@@ -313,7 +314,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             );
                           },
                           style: const ButtonStyle(
-                            overlayColor: MaterialStatePropertyAll(
+                            overlayColor: WidgetStatePropertyAll(
                                 ColorConstants.primaryOverlayColor),
                           ),
                           child: const Text(
@@ -358,8 +359,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 );
               },
               style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.red),
-                foregroundColor: MaterialStatePropertyAll(Colors.white),
+                backgroundColor: WidgetStatePropertyAll(Colors.red),
+                foregroundColor: WidgetStatePropertyAll(Colors.white),
               ),
               label: const Text('End Match'),
               icon: const Icon(
@@ -632,7 +633,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   color: Colors.red,
                                 ),
                                 style: const ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll(
+                                  backgroundColor: WidgetStatePropertyAll(
                                     Colors.white,
                                   ),
                                 ),
@@ -678,9 +679,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 },
                                 style: ButtonStyle(
                                   surfaceTintColor:
-                                      const MaterialStatePropertyAll(
+                                      const WidgetStatePropertyAll(
                                           Colors.black),
-                                  shape: const MaterialStatePropertyAll(
+                                  shape: const WidgetStatePropertyAll(
                                     ContinuousRectangleBorder(
                                       side: BorderSide(
                                         color: Colors.transparent,
@@ -691,20 +692,20 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       ),
                                     ),
                                   ),
-                                  padding: const MaterialStatePropertyAll(
+                                  padding: const WidgetStatePropertyAll(
                                     EdgeInsets.all(0),
                                   ),
-                                  overlayColor: const MaterialStatePropertyAll(
-                                      Colors.blue),
+                                  overlayColor:
+                                      const WidgetStatePropertyAll(Colors.blue),
                                   backgroundColor: index == selectedSymbol
-                                      ? const MaterialStatePropertyAll(
+                                      ? const WidgetStatePropertyAll(
                                           Colors.blue)
-                                      : const MaterialStatePropertyAll(
+                                      : const WidgetStatePropertyAll(
                                           Colors.white),
                                   foregroundColor: index == selectedSymbol
-                                      ? const MaterialStatePropertyAll(
+                                      ? const WidgetStatePropertyAll(
                                           Colors.white)
-                                      : const MaterialStatePropertyAll(
+                                      : const WidgetStatePropertyAll(
                                           Colors.black),
                                   tapTargetSize: MaterialTapTargetSize.padded,
                                 ),
@@ -758,7 +759,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               },
                                               style: const ButtonStyle(
                                                 overlayColor:
-                                                    MaterialStatePropertyAll(
+                                                    WidgetStatePropertyAll(
                                                         ColorConstants
                                                             .primaryOverlayColor),
                                               ),
@@ -796,7 +797,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               },
                                               style: const ButtonStyle(
                                                 overlayColor:
-                                                    MaterialStatePropertyAll(
+                                                    WidgetStatePropertyAll(
                                                         ColorConstants
                                                             .primaryOverlayColor),
                                               ),
@@ -844,7 +845,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                     );
                                   },
                                   style: const ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(
+                                    backgroundColor: WidgetStatePropertyAll(
                                       Color.fromRGBO(177, 50, 50, 1),
                                     ),
                                   ),
