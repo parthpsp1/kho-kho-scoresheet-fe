@@ -22,10 +22,26 @@ bool teamANameError = false;
 bool teamBNameError = false;
 
 class _StartScreenState extends State<StartScreen> {
+  Set<String> selected = {"U-14"}; // Default selection
+
+  @override
+  void initState() {
+    super.initState();
+    teamANameController.text =
+        Provider.of<MatchDetailsProvider>(context, listen: false).teamAName;
+  }
+
+  @override
+  void dispose() {
+    teamANameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     teamANameController.clear();
     teamBNameController.clear();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -86,10 +102,9 @@ class _StartScreenState extends State<StartScreen> {
                         Radius.circular(10),
                       ),
                     ),
-                    counterText: '',
                     errorText: teamANameError ? 'Enter Team A Name' : null,
                   ),
-                  maxLength: 50,
+                  maxLength: 99,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   onChanged: (value) {
                     Provider.of<MatchDetailsProvider>(context, listen: false)
@@ -163,37 +178,42 @@ class _StartScreenState extends State<StartScreen> {
                     const SizedBox(
                       width: 20,
                     ),
-                    FlutterToggleTab(
-                      dataTabs: [
-                        DataTab(title: 'U-14'),
-                        DataTab(title: 'U-18/Open')
+                    SegmentedButton(
+                      segments: [
+                        ButtonSegment(
+                          value: "U-14",
+                          label: Text("U-14"),
+                        ),
+                        ButtonSegment(
+                          value: "U-18/Open",
+                          label: Text("U-18/Open"),
+                        )
                       ],
-                      width: 60,
-                      borderRadius: 12,
-                      selectedBackgroundColors: const [Colors.blue],
-                      selectedTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600),
-                      unSelectedTextStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400),
-                      selectedIndex: Provider.of<MatchDetailsProvider>(context,
-                              listen: false)
-                          .ageGroup,
-                      selectedLabelIndex: (index) {
+                      selected: selected,
+                      onSelectionChanged: (newSelection) {
+                        teamANameController.text =
+                            Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .teamAName ??
+                                "";
+                        teamBNameController.text =
+                            Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .teamBName ??
+                                "";
                         setState(() {
-                          Provider.of<MatchDetailsProvider>(context,
-                                  listen: false)
-                              .ageGroup = index;
+                          selected = newSelection.cast<String>();
                         });
                       },
+                      showSelectedIcon: false,
+                      style: ButtonStyle(
+                        surfaceTintColor: WidgetStatePropertyAll(Colors.black),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 16,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
