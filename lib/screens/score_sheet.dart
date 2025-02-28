@@ -69,8 +69,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
   int _secondsPassed = 0;
   late Timer _timer;
 
-  void _updateTimer(Timer timer, int ageGroup) {
-    if (ageGroup == 0) {
+  void _updateTimer(Timer timer, String ageGroup) {
+    if (ageGroup == "U-14") {
       if (_secondsPassed < 7 * 60) {
         setState(() {
           _secondsPassed++;
@@ -80,8 +80,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
           isTurnTimEnded = true;
         });
       }
-    }
-    if (ageGroup == 1) {
+    } else {
       if (_secondsPassed < 9 * 60) {
         setState(() {
           _secondsPassed++;
@@ -189,7 +188,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
 
     List<String> defenderAndAttacker = deriveDefenderAttacker(
         Provider.of<MatchDetailsProvider>(context, listen: false).tossWinner,
-        Provider.of<MatchDetailsProvider>(context, listen: false).defAtkChoice);
+        Provider.of<MatchDetailsProvider>(context, listen: false).sideChoice);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -403,7 +402,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == 0 ? "7:00" : "9:00"} minutes',
+                      'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == "U-14" ? "7:00" : "9:00"} minutes',
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,

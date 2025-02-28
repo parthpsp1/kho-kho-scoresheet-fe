@@ -7,6 +7,9 @@ import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/about_screen.dart';
 import 'package:kho_kho_scoresheet/screens/score_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final supabase = Supabase.instance.client;
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -90,9 +93,6 @@ class _StartScreenState extends State<StartScreen> {
                 TextFormField(
                   controller: teamANameController,
                   keyboardType: TextInputType.text,
-                  inputFormatters: [
-                    customInputFormatters(),
-                  ],
                   decoration: InputDecoration(
                     label: const Text('Team A Name'),
                     border: const OutlineInputBorder(
@@ -191,6 +191,9 @@ class _StartScreenState extends State<StartScreen> {
                         setState(() {
                           ageGroupSelection = newSelection.cast<String>();
                         });
+                        Provider.of<MatchDetailsProvider>(context,
+                                listen: false)
+                            .ageGroup = ageGroupSelection.join(', ');
                       },
                       showSelectedIcon: false,
                       style: ButtonStyle(
@@ -231,6 +234,9 @@ class _StartScreenState extends State<StartScreen> {
                         setState(() {
                           tossWinnerSelection = newSelection.cast<String>();
                         });
+                        Provider.of<MatchDetailsProvider>(context,
+                                listen: false)
+                            .tossWinner = tossWinnerSelection.join(', ');
                       },
                       showSelectedIcon: false,
                       style: ButtonStyle(
@@ -271,6 +277,9 @@ class _StartScreenState extends State<StartScreen> {
                         setState(() {
                           sideChoiceSelection = newSelection.cast<String>();
                         });
+                        Provider.of<MatchDetailsProvider>(context,
+                                listen: false)
+                            .sideChoice = sideChoiceSelection.join(', ');
                       },
                       showSelectedIcon: false,
                       style: ButtonStyle(
@@ -334,7 +343,7 @@ class _StartScreenState extends State<StartScreen> {
                                                                   context,
                                                                   listen: false)
                                                               .ageGroup ==
-                                                          0
+                                                          "U-14"
                                                       ? 'Under 14'
                                                       : 'Under 18 / Open',
                                                   style: const TextStyle(
@@ -360,7 +369,7 @@ class _StartScreenState extends State<StartScreen> {
                                                                   context,
                                                                   listen: false)
                                                               .tossWinner ==
-                                                          0
+                                                          "A"
                                                       ? 'Team A'
                                                       : 'Team B',
                                                   style: const TextStyle(
@@ -385,8 +394,8 @@ class _StartScreenState extends State<StartScreen> {
                                                   Provider.of<MatchDetailsProvider>(
                                                                   context,
                                                                   listen: false)
-                                                              .defAtkChoice ==
-                                                          0
+                                                              .sideChoice ==
+                                                          "DEF"
                                                       ? 'Defense'
                                                       : 'Attack',
                                                   style: const TextStyle(
@@ -420,6 +429,25 @@ class _StartScreenState extends State<StartScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () async {
+                                            await supabase
+                                                .from('matches')
+                                                .insert({
+                                              'age_group': Provider.of<
+                                                          MatchDetailsProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .ageGroup,
+                                              'team_a_name': Provider.of<
+                                                          MatchDetailsProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .teamAName,
+                                              'team_b_name': Provider.of<
+                                                          MatchDetailsProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .teamBName,
+                                            });
                                             Navigator.of(context).pop();
                                             Navigator.of(context).push(
                                               MaterialPageRoute(
