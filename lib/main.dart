@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/provider/scoresheet_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
+import 'package:kho_kho_scoresheet/secrets.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+String supabaseUrl = "https://wxtbkzexmxblkleydfdb.supabase.co";
+String supbaseKey = Secrets.supbaseKey;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
+  await Supabase.initialize(url: supabaseUrl, anonKey: supbaseKey);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(

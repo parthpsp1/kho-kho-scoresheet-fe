@@ -6,10 +6,8 @@ import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/about_screen.dart';
 import 'package:kho_kho_scoresheet/screens/score_sheet.dart';
+import 'package:kho_kho_scoresheet/supabase/db_queries.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-final supabase = Supabase.instance.client;
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -29,15 +27,9 @@ class _StartScreenState extends State<StartScreen> {
   Set<String> sideChoiceSelection = {"DEF"}; // Default selection
 
   @override
-  void initState() {
-    super.initState();
-    teamANameController.clear();
-    teamBNameController.clear();
-  }
-
-  @override
   void dispose() {
     teamANameController.dispose();
+    teamBNameController.dispose();
     super.dispose();
   }
 
@@ -429,32 +421,40 @@ class _StartScreenState extends State<StartScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            await supabase
-                                                .from('matches')
-                                                .insert({
-                                              'age_group': Provider.of<
-                                                          MatchDetailsProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .ageGroup,
-                                              'team_a_name': Provider.of<
-                                                          MatchDetailsProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .teamAName,
-                                              'team_b_name': Provider.of<
-                                                          MatchDetailsProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .teamBName,
-                                            });
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ScoreSheet(),
-                                              ),
-                                            );
+                                            final dbQuery = SupabaseDBQuery();
+                                            final int matchId =
+                                                await dbQuery.insertIntoMatches(
+                                                    Provider.of<MatchDetailsProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .ageGroup,
+                                                    Provider.of<MatchDetailsProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .teamAName,
+                                                    Provider.of<MatchDetailsProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .teamBName);
+                                            await dbQuery.insertIntoTossDetails(
+                                                matchId,
+                                                Provider.of<MatchDetailsProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .tossWinner,
+                                                Provider.of<MatchDetailsProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .sideChoice);
+                                            if (context.mounted) {
+                                              Navigator.of(context).pop();
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const ScoreSheet(),
+                                                ),
+                                              );
+                                            }
                                           },
                                           style: const ButtonStyle(
                                             overlayColor:
