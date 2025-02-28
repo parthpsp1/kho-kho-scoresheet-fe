@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/helpers/input_formatters.dart';
 import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
@@ -22,13 +21,15 @@ bool teamANameError = false;
 bool teamBNameError = false;
 
 class _StartScreenState extends State<StartScreen> {
-  Set<String> selected = {"U-14"}; // Default selection
+  Set<String> ageGroupSelection = {"U-14"}; // Default selection
+  Set<String> tossWinnerSelection = {"A"}; // Default selection
+  Set<String> sideChoiceSelection = {"DEF"}; // Default selection
 
   @override
   void initState() {
     super.initState();
-    teamANameController.text =
-        Provider.of<MatchDetailsProvider>(context, listen: false).teamAName;
+    teamANameController.clear();
+    teamBNameController.clear();
   }
 
   @override
@@ -39,9 +40,6 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    teamANameController.clear();
-    teamBNameController.clear();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -73,7 +71,7 @@ class _StartScreenState extends State<StartScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -82,7 +80,7 @@ class _StartScreenState extends State<StartScreen> {
                 const Text(
                   'Enter Match Details',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 22,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -127,10 +125,9 @@ class _StartScreenState extends State<StartScreen> {
                         Radius.circular(10),
                       ),
                     ),
-                    counterText: '',
                     errorText: teamBNameError ? 'Enter Team B Name' : null,
                   ),
-                  maxLength: 50,
+                  maxLength: 99,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   onChanged: (value) {
                     Provider.of<MatchDetailsProvider>(context, listen: false)
@@ -189,20 +186,10 @@ class _StartScreenState extends State<StartScreen> {
                           label: Text("U-18/Open"),
                         )
                       ],
-                      selected: selected,
+                      selected: ageGroupSelection,
                       onSelectionChanged: (newSelection) {
-                        teamANameController.text =
-                            Provider.of<MatchDetailsProvider>(context,
-                                        listen: false)
-                                    .teamAName ??
-                                "";
-                        teamBNameController.text =
-                            Provider.of<MatchDetailsProvider>(context,
-                                        listen: false)
-                                    .teamBName ??
-                                "";
                         setState(() {
-                          selected = newSelection.cast<String>();
+                          ageGroupSelection = newSelection.cast<String>();
                         });
                       },
                       showSelectedIcon: false,
@@ -228,29 +215,27 @@ class _StartScreenState extends State<StartScreen> {
                     const SizedBox(
                       width: 20,
                     ),
-                    FlutterToggleTab(
-                      dataTabs: [DataTab(title: 'A'), DataTab(title: 'B')],
-                      width: 40,
-                      borderRadius: 12,
-                      selectedBackgroundColors: const [Colors.blue],
-                      selectedTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600),
-                      unSelectedTextStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400),
-                      selectedIndex: Provider.of<MatchDetailsProvider>(context,
-                              listen: false)
-                          .tossWinner,
-                      selectedLabelIndex: (index) {
+                    SegmentedButton(
+                      segments: [
+                        ButtonSegment(
+                          value: "A",
+                          label: Text("A"),
+                        ),
+                        ButtonSegment(
+                          value: "B",
+                          label: Text("B"),
+                        )
+                      ],
+                      selected: tossWinnerSelection,
+                      onSelectionChanged: (newSelection) {
                         setState(() {
-                          Provider.of<MatchDetailsProvider>(context,
-                                  listen: false)
-                              .tossWinner = index;
+                          tossWinnerSelection = newSelection.cast<String>();
                         });
                       },
+                      showSelectedIcon: false,
+                      style: ButtonStyle(
+                        surfaceTintColor: WidgetStatePropertyAll(Colors.black),
+                      ),
                     ),
                   ],
                 ),
@@ -270,29 +255,27 @@ class _StartScreenState extends State<StartScreen> {
                     const SizedBox(
                       width: 20,
                     ),
-                    FlutterToggleTab(
-                      dataTabs: [DataTab(title: 'DEF'), DataTab(title: 'ATK')],
-                      width: 50,
-                      borderRadius: 12,
-                      selectedBackgroundColors: const [Colors.blue],
-                      selectedTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600),
-                      unSelectedTextStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400),
-                      selectedIndex: Provider.of<MatchDetailsProvider>(context,
-                              listen: false)
-                          .defAtkChoice,
-                      selectedLabelIndex: (index) {
+                    SegmentedButton(
+                      segments: [
+                        ButtonSegment(
+                          value: "DEF",
+                          label: Text("DEF"),
+                        ),
+                        ButtonSegment(
+                          value: "ATK",
+                          label: Text("ATK"),
+                        )
+                      ],
+                      selected: sideChoiceSelection,
+                      onSelectionChanged: (newSelection) {
                         setState(() {
-                          Provider.of<MatchDetailsProvider>(context,
-                                  listen: false)
-                              .defAtkChoice = index;
+                          sideChoiceSelection = newSelection.cast<String>();
                         });
                       },
+                      showSelectedIcon: false,
+                      style: ButtonStyle(
+                        surfaceTintColor: WidgetStatePropertyAll(Colors.black),
+                      ),
                     ),
                   ],
                 ),
