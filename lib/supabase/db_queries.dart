@@ -6,12 +6,12 @@ class SupabaseDBQuery {
   factory SupabaseDBQuery() => _instance;
   SupabaseDBQuery._internal();
 
+  final supabase = Supabase.instance.client;
+
   /// Inserts a match and returns its ID
   Future<int> insertIntoMatches(
       String ageGroup, String teamAName, String teamBName) async {
     try {
-      final supabase = Supabase.instance.client;
-
       final response = await supabase
           .from('matches')
           .insert({
@@ -33,12 +33,28 @@ class SupabaseDBQuery {
   Future<void> insertIntoTossDetails(
       int matchId, String tossWinner, String sideChoice) async {
     try {
-      final supabase = Supabase.instance.client;
-
       await supabase.from('toss_details').insert({
         'match_id': matchId,
         'toss_winner_team_name': tossWinner,
         'chosen_side': sideChoice,
+      });
+    } catch (error) {
+      print('Error inserting toss details: $error');
+      throw Exception('Failed to insert toss details');
+    }
+  }
+
+  /// Inserts round_details linked to a match ID
+  Future<void> insertIntoRoundDetails(int roundNo, int matchId, int defNo,
+      int atkNo, String wicketTime, String symbol) async {
+    try {
+      await supabase.from('round_details').insert({
+        'round_no': roundNo,
+        'match_id': matchId,
+        'def_no': defNo,
+        'atk_no': atkNo,
+        'wicket_time': wicketTime,
+        'symbol': symbol,
       });
     } catch (error) {
       print('Error inserting toss details: $error');

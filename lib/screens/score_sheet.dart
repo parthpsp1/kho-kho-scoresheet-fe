@@ -9,7 +9,6 @@ import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:remix_icon_icons/remix_icon_icons.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ScoreSheet extends StatefulWidget {
@@ -191,6 +190,44 @@ class _ScoreSheetState extends State<ScoreSheet> {
         Provider.of<MatchDetailsProvider>(context, listen: false).sideChoice);
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: isMatchStarted == true && isWicketAdded == false
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                setState(() {
+                  wicketTime = '$minutes:${seconds < 10 ? '0' : ''}$seconds';
+                  isWicketAdded = true;
+                });
+              },
+              label: Text(
+                'Add Wicket',
+                style: TextStyle(color: Colors.white),
+              ),
+              icon: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              elevation: 4,
+              backgroundColor: Colors.green,
+            )
+          : isMatchStarted == true && isWicketAdded == true
+              ? FloatingActionButton.extended(
+                  onPressed: () {
+                    setState(() {
+                      isWicketAdded = false;
+                    });
+                  },
+                  label: Text(
+                    'Cancel Wicket',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  icon: Icon(
+                    Icons.cancel_outlined,
+                    color: Colors.white,
+                  ),
+                  elevation: 4,
+                  backgroundColor: Colors.red,
+                )
+              : const SizedBox(),
       appBar: AppBar(
         title: const Text(
           'Kho-Kho Scoresheet',
@@ -431,49 +468,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       indent: 20,
                       endIndent: 20,
                     ),
-                    isMatchStarted == true
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 56,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          wicketTime =
-                                              '$minutes:${seconds < 10 ? '0' : ''}$seconds';
-                                          isWicketAdded = true;
-                                        });
-                                      },
-                                      child: const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(RemixIcon.add_circle_outline),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            'Add Wicket',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : const SizedBox(
-                            height: 40,
-                          ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -527,6 +521,30 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           ),
                         ],
                       ),
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(
+                            Provider.of<MatchDetailsProvider>(context,
+                                                listen: false)
+                                            .tossWinner ==
+                                        'A' &&
+                                    Provider.of<MatchDetailsProvider>(context,
+                                                listen: false)
+                                            .sideChoice ==
+                                        "DEF"
+                                ? Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .teamBName
+                                : Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .teamAName,
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(
                       height: 10,
@@ -590,6 +608,30 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       )
                     else
                       const SizedBox(height: 40),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(
+                            Provider.of<MatchDetailsProvider>(context,
+                                                listen: false)
+                                            .tossWinner ==
+                                        'A' &&
+                                    Provider.of<MatchDetailsProvider>(context,
+                                                listen: false)
+                                            .sideChoice ==
+                                        "ATK"
+                                ? Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .teamBName
+                                : Provider.of<MatchDetailsProvider>(context,
+                                        listen: false)
+                                    .teamAName,
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -605,37 +647,37 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                wicketTime,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    wicketTime = '';
-                                  });
-                                },
-                                icon: const Icon(
-                                  RemixIcon.close_outline,
-                                  color: Colors.red,
-                                ),
-                                style: const ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                    Colors.white,
-                                  ),
-                                ),
-                              )
-                            ],
+                          Text(
+                            wicketTime,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   children: [
+                          //     // const SizedBox(
+                          //     //   width: 10,
+                          //     // ),
+                          //     // IconButton(
+                          //     //   onPressed: () {
+                          //     //     setState(() {
+                          //     //       wicketTime = '';
+                          //     //     });
+                          //     //   },
+                          //     //   icon: const Icon(
+                          //     //     RemixIcon.close_outline,
+                          //     //     color: Colors.red,
+                          //     //   ),
+                          //     //   style: const ButtonStyle(
+                          //     //     backgroundColor: WidgetStatePropertyAll(
+                          //     //       Colors.white,
+                          //     //     ),
+                          //     //   ),
+                          //     // )
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),
@@ -1117,7 +1159,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),

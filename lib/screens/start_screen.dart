@@ -83,6 +83,7 @@ class _StartScreenState extends State<StartScreen> {
                   height: 20,
                 ),
                 TextFormField(
+                  autofillHints: ['Pune', 'Mumbai'],
                   controller: teamANameController,
                   textCapitalization: TextCapitalization.words,
                   keyboardType: TextInputType.text,
@@ -106,6 +107,7 @@ class _StartScreenState extends State<StartScreen> {
                   height: 20,
                 ),
                 TextFormField(
+                  autofillHints: ['Pune', 'Mumbai'],
                   controller: teamBNameController,
                   textCapitalization: TextCapitalization.words,
                   keyboardType: TextInputType.text,
@@ -444,7 +446,7 @@ class _StartScreenState extends State<StartScreen> {
                                                 Provider.of<MatchDetailsProvider>(
                                                         context,
                                                         listen: false)
-                                                    .tossWinner,
+                                                    .teamAName,
                                                 Provider.of<MatchDetailsProvider>(
                                                         context,
                                                         listen: false)
