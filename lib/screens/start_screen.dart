@@ -45,12 +45,14 @@ class _StartScreenState extends State<StartScreen> {
           ),
         ),
         titleSpacing: 20,
+        elevation: 0,
+        forceMaterialTransparency: false,
         actions: [
           Padding(
             padding: const EdgeInsets.only(
               right: 10,
             ),
-            child: TextButton.icon(
+            child: IconButton(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -59,8 +61,6 @@ class _StartScreenState extends State<StartScreen> {
                 );
               },
               icon: const Icon(Icons.info_outline),
-              label: const Text('About'),
-              iconAlignment: IconAlignment.end,
             ),
           ),
         ],
@@ -84,6 +84,7 @@ class _StartScreenState extends State<StartScreen> {
                 ),
                 TextFormField(
                   controller: teamANameController,
+                  textCapitalization: TextCapitalization.words,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     label: const Text('Team A Name'),
@@ -98,7 +99,7 @@ class _StartScreenState extends State<StartScreen> {
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   onChanged: (value) {
                     Provider.of<MatchDetailsProvider>(context, listen: false)
-                        .updateTeamAName(value);
+                        .updateTeamAName(value.trim());
                   },
                 ),
                 const SizedBox(
@@ -106,6 +107,7 @@ class _StartScreenState extends State<StartScreen> {
                 ),
                 TextFormField(
                   controller: teamBNameController,
+                  textCapitalization: TextCapitalization.words,
                   keyboardType: TextInputType.text,
                   inputFormatters: [
                     customInputFormatters(),
@@ -123,7 +125,7 @@ class _StartScreenState extends State<StartScreen> {
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   onChanged: (value) {
                     Provider.of<MatchDetailsProvider>(context, listen: false)
-                        .updateTeamBName(value);
+                        .updateTeamBName(value.trim());
                   },
                 ),
                 const SizedBox(
@@ -377,7 +379,7 @@ class _StartScreenState extends State<StartScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 const Text(
-                                                  'Choice:',
+                                                  'Side Chosen:',
                                                   style: TextStyle(
                                                     fontSize: 18,
                                                   ),
@@ -391,9 +393,9 @@ class _StartScreenState extends State<StartScreen> {
                                                       ? 'Defense'
                                                       : 'Attack',
                                                   style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -421,6 +423,7 @@ class _StartScreenState extends State<StartScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () async {
+                                            CircularProgressIndicator();
                                             final dbQuery = SupabaseDBQuery();
                                             final int matchId =
                                                 await dbQuery.insertIntoMatches(

@@ -390,10 +390,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         ),
                       );
                     },
-                    label: Text('Start Turn ${turnCount + 1}'),
-                    icon: const Icon(
-                      Icons.sports_score_outlined,
-                    ),
+                    label: Text('Start Turn No. ${turnCount + 1}'),
                   ),
                 ),
               )
