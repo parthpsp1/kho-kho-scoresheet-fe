@@ -33,8 +33,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
-  flutter_toggle_tab: ^1.5.1
-  hive: ^2.2.3
   intl: ^0.20.2
   path_provider: ^2.1.5
   permission_handler: ^11.3.0
@@ -44,7 +42,6 @@ dependencies:
   shared_preferences: ^2.2.2
   supabase_flutter: ^2.8.4
   url_launcher: ^6.2.5
-  wheel_chooser: ^1.1.2
 
 dev_dependencies:
 

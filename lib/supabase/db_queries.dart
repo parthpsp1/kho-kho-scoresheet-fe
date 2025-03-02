@@ -45,16 +45,17 @@ class SupabaseDBQuery {
   }
 
   /// Inserts round_details linked to a match ID
-  Future<void> insertIntoRoundDetails(int roundNo, int matchId, int defNo,
-      int atkNo, String wicketTime, String symbol) async {
+  Future<void> insertIntoRoundDetails(int turnNo, int matchId, int defNo,
+      int atkNo, String wicketTime, String perTime, String symbol) async {
     try {
-      await supabase.from('round_details').insert({
-        'round_no': roundNo,
-        'match_id': matchId,
+      await supabase.from('match_turn_details').insert({
         'def_no': defNo,
         'atk_no': atkNo,
         'wicket_time': wicketTime,
         'symbol': symbol,
+        'turn_no': turnNo,
+        'match_id': matchId,
+        'per_time': perTime,
       });
     } catch (error) {
       print('Error inserting toss details: $error');

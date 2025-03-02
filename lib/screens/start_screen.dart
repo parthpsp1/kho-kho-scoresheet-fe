@@ -459,7 +459,9 @@ class _StartScreenState extends State<StartScreen> {
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const ScoreSheet(),
+                                                      ScoreSheet(
+                                                    matchId: matchId,
+                                                  ),
                                                 ),
                                               );
                                             }
