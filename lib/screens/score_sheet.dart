@@ -9,7 +9,6 @@ import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:wheel_chooser/wheel_chooser.dart';
 
 class ScoreSheet extends StatefulWidget {
   const ScoreSheet({super.key});
@@ -18,6 +17,7 @@ class ScoreSheet extends StatefulWidget {
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
+int initialValueDropDown = 0;
 String defenderFieldValue = "";
 String attackerFieldValue = "";
 int selectedSymbol = -1;
@@ -472,9 +472,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       height: 10,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           turnCount > 1
                               ? Text(
@@ -491,34 +491,27 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                          const SizedBox(
-                            width: 20,
-                          ),
                           SizedBox(
-                            height: 40,
-                            width: 160,
-                            child: WheelChooser(
-                              onValueChanged: (s) {
+                            width: 140,
+                            child: DropdownButton<int>(
+                              items: List.generate(15, (index) => index + 1)
+                                  .map((number) => DropdownMenuItem(
+                                        value: number,
+                                        child: Text(number.toString()),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
                                 setState(() {
-                                  defenderFieldValue = s.toString();
+                                  defenderFieldValue = value.toString();
                                 });
                               },
-                              datas: List.generate(15, (index) => index + 1),
-                              horizontal: true,
-                              isInfinite: false,
-                              squeeze: 1,
-                              magnification: 1,
-                              selectTextStyle: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              unSelectTextStyle: const TextStyle(
-                                fontWeight: FontWeight.w100,
-                              ),
-                              startPosition: selectedPlayerNumberIndex,
-                              physics: const ClampingScrollPhysics(),
+                              hint: Text("Player no."),
+                              value: defenderFieldValue.isNotEmpty
+                                  ? int.tryParse(defenderFieldValue)
+                                  : null,
+                              isExpanded: true,
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -537,10 +530,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                         "DEF"
                                 ? Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
-                                    .teamBName
+                                    .teamAName
                                 : Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
-                                    .teamAName,
+                                    .teamBName,
                             style: TextStyle(fontStyle: FontStyle.italic),
                           ),
                         ),
@@ -556,9 +549,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         selectedSymbol != 11 &&
                         selectedSymbol != 12)
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             turnCount > 1
                                 ? Text(
@@ -575,32 +568,25 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                            const SizedBox(
-                              width: 20,
-                            ),
                             SizedBox(
-                              height: 40,
-                              width: 160,
-                              child: WheelChooser(
-                                onValueChanged: (s) {
+                              width: 140,
+                              child: DropdownButton<int>(
+                                items: List.generate(15, (index) => index + 1)
+                                    .map((number) => DropdownMenuItem(
+                                          value: number,
+                                          child: Text(number.toString()),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
                                   setState(() {
-                                    attackerFieldValue = s.toString();
+                                    attackerFieldValue = value.toString();
                                   });
                                 },
-                                datas: List.generate(15, (index) => index + 1),
-                                horizontal: true,
-                                isInfinite: false,
-                                squeeze: 1,
-                                magnification: 1,
-                                selectTextStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                unSelectTextStyle: const TextStyle(
-                                  fontWeight: FontWeight.w100,
-                                ),
-                                startPosition: selectedPlayerNumberIndex,
-                                physics: const ClampingScrollPhysics(),
+                                hint: Text("Player no."),
+                                value: attackerFieldValue.isNotEmpty
+                                    ? int.tryParse(attackerFieldValue)
+                                    : null,
+                                isExpanded: true,
                               ),
                             ),
                           ],

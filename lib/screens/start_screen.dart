@@ -27,13 +27,6 @@ class _StartScreenState extends State<StartScreen> {
   Set<String> sideChoiceSelection = {"DEF"}; // Default selection
 
   @override
-  void dispose() {
-    teamANameController.dispose();
-    teamBNameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -360,18 +353,28 @@ class _StartScreenState extends State<StartScreen> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
-                                                Text(
-                                                  Provider.of<MatchDetailsProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .tossWinner ==
-                                                          "A"
-                                                      ? 'Team A'
-                                                      : 'Team B',
-                                                  style: const TextStyle(
+                                                Flexible(
+                                                  child: Text(
+                                                    Provider.of<MatchDetailsProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .tossWinner ==
+                                                            "A"
+                                                        ? 'Team A (${Provider.of<MatchDetailsProvider>(context, listen: false).teamAName})'
+                                                        : 'Team B (${Provider.of<MatchDetailsProvider>(context, listen: false).teamBName})',
+                                                    style: const TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
-                                                          FontWeight.bold),
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    softWrap: true,
+                                                    textWidthBasis:
+                                                        TextWidthBasis.parent,
+                                                  ),
                                                 ),
                                               ],
                                             ),
