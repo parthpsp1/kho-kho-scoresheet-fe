@@ -6,6 +6,7 @@ class MatchDetailsProvider extends ChangeNotifier {
   String ageGroup;
   String tossWinner;
   String sideChoice;
+  Map<String, String> defAttackerMap = {};
 
   MatchDetailsProvider({
     this.ageGroup = 'U-14',
@@ -21,25 +22,5 @@ class MatchDetailsProvider extends ChangeNotifier {
 
   void updateTeamBName(String teamBName) {
     this.teamBName = teamBName;
-  }
-
-  void updateAgeGroup(String ageGroup) {
-    this.ageGroup = ageGroup;
-  }
-
-  void updateTossWinner(String tossWinner) {
-    this.tossWinner = tossWinner;
-  }
-
-  void updateDefAtkChoice(String sideChoice) {
-    this.sideChoice = sideChoice;
-  }
-
-  void clearMatchData() {
-    ageGroup = 'U-14';
-    tossWinner = 'A';
-    sideChoice = 'DEF';
-    teamAName = '';
-    teamBName = '';
   }
 }

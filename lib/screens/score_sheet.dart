@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
-import 'package:kho_kho_scoresheet/helpers/derive_symbol.dart';
 import 'package:kho_kho_scoresheet/helpers/excel_module.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
@@ -21,8 +20,8 @@ class ScoreSheet extends StatefulWidget {
 }
 
 int? initialValueDropDown = 0;
-String defenderNumber = "";
-String attackerNumber = "";
+int? defenderNumber;
+int? attackerNumber;
 int selectedSymbol = -1;
 String wicketTime = '';
 bool isTurnTimEnded = false;
@@ -45,27 +44,6 @@ List teamBTurn1Score = [];
 List teamBTurn2Score = [];
 List teamBTurn3Score = [];
 List teamBTurn4Score = [];
-
-void onDefenderFieldChange(defenderFieldValue) {
-  defenderFieldValue = defenderFieldValue;
-}
-
-void onAttackerFieldChange(attackerFieldValue) {
-  attackerFieldValue = attackerFieldValue;
-}
-
-List<String> deriveDefenderAttacker(tossWinnerIndex, defAtkChoiceIndex) {
-  if (tossWinnerIndex == 0 && defAtkChoiceIndex == 0) {
-    return ['A', 'B'];
-  }
-  if (tossWinnerIndex == 1 && defAtkChoiceIndex == 1) {
-    return ['A', 'B'];
-  }
-  if (tossWinnerIndex == 0 && defAtkChoiceIndex == 1) {
-    return ['B', 'A'];
-  }
-  return ['B', 'A'];
-}
 
 class _ScoreSheetState extends State<ScoreSheet> {
   int _secondsPassed = 0;
@@ -115,6 +93,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
           ? showDialog(
               context: context,
               builder: (BuildContext context) {
+                final matchDetails =
+                    Provider.of<MatchDetailsProvider>(context, listen: false);
                 return PopScope(
                   canPop: false,
                   child: AlertDialog.adaptive(
@@ -124,8 +104,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       TextButton(
                         onPressed: () {
                           setState(() {
-                            attackerNumber = 'A';
-                            defenderNumber = 'B';
+                            matchDetails.defAttackerMap = {
+                              "DEF": "B",
+                              "ATK": "A"
+                            };
                           });
                           Navigator.of(context).pop();
                         },
@@ -134,8 +116,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       TextButton(
                         onPressed: () {
                           setState(() {
-                            attackerNumber = 'B';
-                            defenderNumber = 'A';
+                            matchDetails.defAttackerMap = {
+                              "DEF": "A",
+                              "ATK": "B"
+                            };
                           });
                           Navigator.of(context).pop();
                         },
@@ -185,12 +169,12 @@ class _ScoreSheetState extends State<ScoreSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final matchDetails =
+        Provider.of<MatchDetailsProvider>(context, listen: false);
     int minutes = _secondsPassed ~/ 60;
     int seconds = _secondsPassed % 60;
 
-    List<String> defenderAndAttacker = deriveDefenderAttacker(
-        Provider.of<MatchDetailsProvider>(context, listen: false).tossWinner,
-        Provider.of<MatchDetailsProvider>(context, listen: false).sideChoice);
+    List<String> defenderAndAttacker = [""];
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: isMatchStarted == true && isWicketAdded == false
@@ -479,21 +463,13 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          turnCount > 1
-                              ? Text(
-                                  'DEF ($defenderNumber) Number',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                              : Text(
-                                  'DEF (${turnCount.isEven ? defenderAndAttacker[0] : defenderAndAttacker[1]}) Number',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                          Text(
+                            'DEF (${matchDetails.defAttackerMap['DEF']}) Number',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                           SizedBox(
                             width: 100,
                             child: DropdownButton<int>(
@@ -505,7 +481,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   .toList(),
                               onChanged: (value) {
                                 setState(() {
-                                  defenderNumber = value.toString();
+                                  defenderNumber = value;
                                 });
                               },
                               hint: Text(
@@ -514,9 +490,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   fontSize: 16,
                                 ),
                               ),
-                              value: defenderNumber.isNotEmpty
-                                  ? int.tryParse(defenderNumber)
-                                  : null,
+                              value: defenderNumber,
                               isExpanded: true,
                               style: TextStyle(
                                 color: Colors.black,
@@ -533,13 +507,13 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
-                            turnCount.isEven
+                            matchDetails.defAttackerMap['DEF'] == "A"
                                 ? Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
-                                    .teamBName
+                                    .teamAName
                                 : Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
-                                    .teamAName,
+                                    .teamBName,
                             style: TextStyle(fontStyle: FontStyle.italic),
                           ),
                         ),
@@ -559,21 +533,13 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            turnCount > 1
-                                ? Text(
-                                    'ATK ($attackerNumber) Number',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )
-                                : Text(
-                                    'ATK (${turnCount.isEven ? defenderAndAttacker[1] : defenderAndAttacker[0]}) Number',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
+                            Text(
+                              'ATK (${matchDetails.defAttackerMap['ATK']}) Number',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                             SizedBox(
                               width: 100,
                               child: DropdownButton<int>(
@@ -585,7 +551,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       .toList(),
                                   onChanged: (value) {
                                     setState(() {
-                                      attackerNumber = value.toString();
+                                      attackerNumber = value;
                                     });
                                   },
                                   hint: Text(
@@ -594,9 +560,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       fontSize: 16,
                                     ),
                                   ),
-                                  value: attackerNumber.isNotEmpty
-                                      ? int.tryParse(attackerNumber)
-                                      : null,
+                                  value: attackerNumber,
                                   isExpanded: true,
                                   style: TextStyle(
                                     color: Colors.black,
@@ -614,7 +578,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
-                            turnCount.isEven
+                            matchDetails.defAttackerMap['ATK'] == "A"
                                 ? Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
                                     .teamAName
@@ -806,6 +770,12 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             ),
                                             TextButton(
                                               onPressed: () {
+                                                matchDetails.defAttackerMap = {
+                                                  "DEF": matchDetails
+                                                      .defAttackerMap["ATK"]!,
+                                                  "ATK": matchDetails
+                                                      .defAttackerMap["DEF"]!
+                                                };
                                                 Navigator.of(context).pop();
                                                 setState(() {
                                                   singleTurnData[turnCount
@@ -815,11 +785,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                   turnCount++;
                                                   allRunTimes = [];
                                                   isMatchStarted = false;
-                                                  String temp = attackerNumber;
                                                   initialValueDropDown = null;
-                                                  attackerNumber =
-                                                      defenderNumber;
-                                                  defenderNumber = temp;
                                                 });
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
@@ -899,25 +865,25 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                           if (isMatchStarted == true &&
                                               selectedSymbol != -1 &&
                                               wicketTime != '' &&
-                                              defenderNumber != '' &&
-                                              attackerNumber != '') {
-                                            Map<String, String> singleRunTime =
-                                                {
-                                              "def_number": defenderNumber,
-                                              "atk_number": (selectedSymbol ==
-                                                          4 ||
-                                                      selectedSymbol == 5 ||
-                                                      selectedSymbol == 6 ||
-                                                      selectedSymbol == 8 ||
-                                                      selectedSymbol == 11 ||
-                                                      selectedSymbol == 12)
-                                                  ? '-'
-                                                  : attackerNumber,
-                                              "run_time": wicketTime,
-                                              "symbol":
-                                                  deriveSymbol(selectedSymbol),
-                                            };
-                                            allRunTimes.add(singleRunTime);
+                                              defenderNumber != null &&
+                                              attackerNumber != null) {
+                                            // Map<String, String> singleRunTime =
+                                            //     {
+                                            //   "def_number": defenderNumber,
+                                            //   "atk_number": (selectedSymbol ==
+                                            //               4 ||
+                                            //           selectedSymbol == 5 ||
+                                            //           selectedSymbol == 6 ||
+                                            //           selectedSymbol == 8 ||
+                                            //           selectedSymbol == 11 ||
+                                            //           selectedSymbol == 12)
+                                            //       ? '-'
+                                            //       : attackerNumber,
+                                            //   "run_time": wicketTime,
+                                            //   "symbol":
+                                            //       deriveSymbol(selectedSymbol),
+                                            // };
+                                            // allRunTimes.add(singleRunTime);
                                             String attacker = turnCount.isEven
                                                 ? defenderAndAttacker[1]
                                                 : defenderAndAttacker[0];

@@ -428,32 +428,40 @@ class _StartScreenState extends State<StartScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            CircularProgressIndicator();
+                                            final matchDetails = Provider.of<
+                                                MatchDetailsProvider>(
+                                              context,
+                                              listen: false,
+                                            );
+                                            final teamAName =
+                                                matchDetails.teamAName;
+                                            final teamBName =
+                                                matchDetails.teamBName;
+                                            final ageGroup =
+                                                matchDetails.ageGroup;
+                                            final tossWinner =
+                                                matchDetails.tossWinner;
+                                            final sideChoice =
+                                                matchDetails.sideChoice;
                                             final dbQuery = SupabaseDBQuery();
                                             final int matchId =
                                                 await dbQuery.insertIntoMatches(
-                                                    Provider.of<MatchDetailsProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .ageGroup,
-                                                    Provider.of<MatchDetailsProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .teamAName,
-                                                    Provider.of<MatchDetailsProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .teamBName);
+                                              ageGroup,
+                                              teamAName,
+                                              teamBName,
+                                            );
                                             await dbQuery.insertIntoTossDetails(
-                                                matchId,
-                                                Provider.of<MatchDetailsProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .teamAName,
-                                                Provider.of<MatchDetailsProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .sideChoice);
+                                                matchId, teamAName, sideChoice);
+                                            matchDetails.defAttackerMap = {
+                                              "DEF": (tossWinner == "A" &&
+                                                      sideChoice == "DEF")
+                                                  ? "A"
+                                                  : "B",
+                                              "ATK": (tossWinner == "A" &&
+                                                      sideChoice == "ATK")
+                                                  ? "A"
+                                                  : "B",
+                                            };
                                             if (context.mounted) {
                                               Navigator.of(context).pop();
                                               Navigator.of(context).push(
