@@ -19,7 +19,6 @@ class ScoreSheet extends StatefulWidget {
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
-int? initialValueDropDown = 0;
 int? defenderNumber;
 int? attackerNumber;
 int selectedSymbol = -1;
@@ -35,15 +34,15 @@ Map<String, dynamic> singleTurnData = {};
 List<Map<String, dynamic>> allRunTimes = [];
 List<Map<String, dynamic>> matchData = [];
 
-List teamATurn1Score = [];
-List teamATurn2Score = [];
-List teamATurn3Score = [];
-List teamATurn4Score = [];
+List<int> teamATurn1Score = [];
+List<int> teamATurn2Score = [];
+List<int> teamATurn3Score = [];
+List<int> teamATurn4Score = [];
 
-List teamBTurn1Score = [];
-List teamBTurn2Score = [];
-List teamBTurn3Score = [];
-List teamBTurn4Score = [];
+List<int> teamBTurn1Score = [];
+List<int> teamBTurn2Score = [];
+List<int> teamBTurn3Score = [];
+List<int> teamBTurn4Score = [];
 
 class _ScoreSheetState extends State<ScoreSheet> {
   int _secondsPassed = 0;
@@ -201,6 +200,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   onPressed: () {
                     setState(() {
                       isWicketAdded = false;
+                      wicketTime = '';
+                      defenderNumber = null;
+                      attackerNumber = null;
                     });
                   },
                   label: Text(
@@ -423,7 +425,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Turn ${turnCount + 1} will end at ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == "U-14" ? "7:00" : "9:00"} minutes',
+                      'Turn ${turnCount + 1} will end in ${Provider.of<MatchDetailsProvider>(context, listen: false).ageGroup == "U-14" ? "7:00" : "9:00"} minutes',
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -785,7 +787,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                   turnCount++;
                                                   allRunTimes = [];
                                                   isMatchStarted = false;
-                                                  initialValueDropDown = null;
+                                                  defenderNumber = null;
+                                                  attackerNumber = null;
                                                 });
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
@@ -884,10 +887,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             //       deriveSymbol(selectedSymbol),
                                             // };
                                             // allRunTimes.add(singleRunTime);
-                                            String attacker = turnCount.isEven
-                                                ? defenderAndAttacker[1]
-                                                : defenderAndAttacker[0];
-                                            writeScoreOnUI(attacker);
+                                            String attackerTeam = matchDetails
+                                                .defAttackerMap["ATK"]!;
+                                            writeScoreOnUI(attackerTeam);
                                             await SupabaseDBQuery()
                                                 .insertIntoRoundDetails(
                                                     turnCount + 1,
@@ -898,7 +900,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                     "0:00",
                                                     selectedSymbol.toString());
                                             setState(() {
-                                              initialValueDropDown = null;
+                                              defenderNumber = null;
+                                              attackerNumber = null;
                                               selectedSymbol = -1;
                                               wicketTime = '';
                                               isWicketAdded = false;
