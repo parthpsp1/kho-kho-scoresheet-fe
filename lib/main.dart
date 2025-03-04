@@ -11,7 +11,18 @@ String supbaseKey = Secrets.supbaseKey;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: supabaseUrl, anonKey: supbaseKey);
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supbaseKey,
+    authOptions: FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
+        localStorage: SharedPreferencesLocalStorage(
+          persistSessionKey: "123213213",
+        ),
+        autoRefreshToken: true),
+  );
+  final session = Supabase.instance.client.auth.currentSession;
+  print(session);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
