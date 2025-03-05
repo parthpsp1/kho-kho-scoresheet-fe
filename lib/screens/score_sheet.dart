@@ -22,7 +22,7 @@ class ScoreSheet extends StatefulWidget {
 
 int? defenderNumber;
 int? attackerNumber;
-int selectedSymbol = -1;
+String? selectedSymbol;
 String wicketTime = '';
 bool isTurnTimEnded = false;
 bool isWicketAdded = false;
@@ -95,6 +95,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
               builder: (BuildContext context) {
                 final matchDetails =
                     Provider.of<MatchDetailsProvider>(context, listen: false);
+
                 return PopScope(
                   canPop: false,
                   child: AlertDialog.adaptive(
@@ -171,6 +172,13 @@ class _ScoreSheetState extends State<ScoreSheet> {
   Widget build(BuildContext context) {
     final matchDetails =
         Provider.of<MatchDetailsProvider>(context, listen: false);
+    print("");
+    print("");
+    print("");
+    print("Check: ${matchDetails.perTimes}");
+    print("");
+    print("");
+    print("");
     int minutes = _secondsPassed ~/ 60;
     int seconds = _secondsPassed % 60;
 
@@ -525,12 +533,12 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     const SizedBox(
                       height: 10,
                     ),
-                    if (selectedSymbol != 4 &&
-                        selectedSymbol != 5 &&
-                        selectedSymbol != 6 &&
-                        selectedSymbol != 8 &&
-                        selectedSymbol != 11 &&
-                        selectedSymbol != 12)
+                    if (selectedSymbol != "O" &&
+                        selectedSymbol != "R" &&
+                        selectedSymbol != "L" &&
+                        selectedSymbol != "W" &&
+                        selectedSymbol != "][" &&
+                        selectedSymbol != "-")
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
@@ -669,11 +677,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               child: OutlinedButton(
                                 onPressed: () {
                                   setState(() {
-                                    if (selectedSymbol == index) {
-                                      selectedSymbol = -1;
-                                    } else {
-                                      selectedSymbol = index;
-                                    }
+                                    selectedSymbol = symbolList[index];
                                   });
                                 },
                                 style: ButtonStyle(
@@ -683,7 +687,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   shape: const WidgetStatePropertyAll(
                                     ContinuousRectangleBorder(
                                       side: BorderSide(
-                                        color: Colors.transparent,
+                                        color: Colors.grey,
                                         width: 0,
                                       ),
                                       borderRadius: BorderRadius.all(
@@ -696,16 +700,18 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   ),
                                   overlayColor:
                                       const WidgetStatePropertyAll(Colors.blue),
-                                  backgroundColor: index == selectedSymbol
-                                      ? const WidgetStatePropertyAll(
-                                          Colors.blue)
-                                      : const WidgetStatePropertyAll(
-                                          Colors.white),
-                                  foregroundColor: index == selectedSymbol
-                                      ? const WidgetStatePropertyAll(
-                                          Colors.white)
-                                      : const WidgetStatePropertyAll(
-                                          Colors.black),
+                                  backgroundColor:
+                                      selectedSymbol == symbolList[index]
+                                          ? const WidgetStatePropertyAll(
+                                              Colors.blue)
+                                          : const WidgetStatePropertyAll(
+                                              Colors.white),
+                                  foregroundColor:
+                                      selectedSymbol == symbolList[index]
+                                          ? const WidgetStatePropertyAll(
+                                              Colors.white)
+                                          : const WidgetStatePropertyAll(
+                                              Colors.black),
                                   tapTargetSize: MaterialTapTargetSize.padded,
                                 ),
                                 child: Text(
@@ -867,7 +873,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       child: ElevatedButton(
                                         onPressed: () async {
                                           if (isMatchStarted == true &&
-                                              selectedSymbol != -1 &&
+                                              selectedSymbol != null &&
                                               wicketTime != '' &&
                                               defenderNumber != null &&
                                               attackerNumber != null) {
@@ -888,8 +894,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             //       deriveSymbol(selectedSymbol),
                                             // };
                                             // allRunTimes.add(singleRunTime);
-                                            matchDetails.perTimes.add(parseTime(
-                                                '$minutes:${seconds < 10 ? '0' : ''}$seconds'));
+                                            matchDetails.perTimes
+                                                .add(parseTime(wicketTime));
                                             String attackerTeam = matchDetails
                                                 .defAttackerMap["ATK"]!;
                                             writeScoreOnUI(attackerTeam);
@@ -897,6 +903,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                 deriveTimeDifference(
                                                     matchDetails.perTimes,
                                                     selectedSymbol.toString());
+                                            matchDetails.perTimes.removeLast();
                                             matchDetails.perTimes
                                                 .add(parseTime(perTime));
                                             await SupabaseDBQuery()
@@ -912,7 +919,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             setState(() {
                                               defenderNumber = null;
                                               attackerNumber = null;
-                                              selectedSymbol = -1;
+                                              selectedSymbol = null;
                                               wicketTime = '';
                                               isWicketAdded = false;
                                             });
@@ -1142,7 +1149,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
   }
 
   void writeScoreOnUI(attacker) {
-    if (selectedSymbol != 11 && selectedSymbol != 12) {
+    if (selectedSymbol != "][" && selectedSymbol != "-") {
       if (turnCount == 0) {
         if (attacker == 'A') {
           teamATurn1Score.add(allRunTimes.length);

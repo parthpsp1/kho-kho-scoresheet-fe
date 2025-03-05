@@ -8,30 +8,29 @@ String deriveFirstTimeDifference(int dataLength, data) {
 }
 
 String deriveTimeDifference(List<Duration> perTimes, String symbol) {
-  String result = "0:00";
-
-  for (int i = 0; i < perTimes.length; i++) {
+  // To do - Update this logic to continue the loop
+  perTimes = perTimes.reversed.toList();
+  for (int i = perTimes.length - 1; i >= 0;) {
     if (symbol == 'SA' || symbol == 'L') {
-      if (i - 2 < 0) {
-        result = "0:00";
+      if (perTimes.length <= 2) {
+        return "0:00";
       } else {
-        result =
-            calculateTimeDifference(perTimes[i], perTimes[i - 2]).toString();
+        return calculateTimeDifference(perTimes[i], perTimes[i - 2]).toString();
       }
     } else {
-      if (i - 1 < 0) {
-        result = "0:00";
+      if (perTimes.length == 1) {
+        return perTimes[0].toString();
       } else {
-        result =
-            calculateTimeDifference(perTimes[i], perTimes[i - 1]).toString();
+        return calculateTimeDifference(perTimes[i], perTimes[i - 1]).toString();
       }
     }
   }
-  return result;
+
+  return "0:00"; // Default return in case all conditions fail
 }
 
 Duration calculateTimeDifference(Duration time1, Duration time2) {
-  return time1 - time2;
+  return time2 - time1;
 }
 
 String formatDuration(Duration duration) {
@@ -57,7 +56,7 @@ String getTimeDateForFileName() {
 
 Duration parseTime(String time) {
   List<String> parts = time.split(":");
-  int hours = int.parse(parts[0]);
-  int minutes = int.parse(parts[1]);
-  return Duration(hours: hours, minutes: minutes);
+  int minutes = int.parse(parts[0]);
+  int seconds = int.parse(parts[1]);
+  return Duration(minutes: minutes, seconds: seconds);
 }

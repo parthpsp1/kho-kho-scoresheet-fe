@@ -7,6 +7,7 @@ class MatchDetailsProvider extends ChangeNotifier {
   String tossWinner;
   String sideChoice;
   Map<String, String> defAttackerMap = {};
+  // Save perTimes i.e. wicket time t2 - t1 wicket times etc.
   List<Duration> perTimes = [];
 
   MatchDetailsProvider({
