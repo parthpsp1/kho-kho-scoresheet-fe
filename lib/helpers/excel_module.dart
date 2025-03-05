@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
-import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
+import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,10 +29,10 @@ void createExcel(
 ) async {
   Excel excel = Excel.createExcel();
   Sheet sheet = excel['Sheet1'];
-  String teamAName =
-      Provider.of<MatchDetailsProvider>(context, listen: false).teamAName;
-  String teamBName =
-      Provider.of<MatchDetailsProvider>(context, listen: false).teamBName;
+  final matchDetails =
+      Provider.of<MatchDetailsProvider>(context, listen: false);
+  String teamAName = matchDetails.teamAName;
+  String teamBName = matchDetails.teamBName;
 
   void writeHeaders() {
     // Write headers
@@ -236,42 +236,43 @@ void createExcel(
     }
   }
 
-  for (var i = 0; i < matchData.length; i++) {
-    List row = matchData[i][i.toString()];
-    List derivedData = deriveTimeDifference(row);
-    customColumnIndex = 1;
-    if (i == 0) {
-      customRowIndex = 5;
-    }
-    if (i == 1) {
-      customRowIndex = 12;
-    }
-    if (i == 2) {
-      customRowIndex = 19;
-    }
-    if (i == 3) {
-      customRowIndex = 26;
-    }
-    if (i == 4) {
-      customRowIndex = 33;
-    }
-    if (i == 5) {
-      customRowIndex = 40;
-    }
-    if (i == 6) {
-      customRowIndex = 47;
-    }
-    if (i == 7) {
-      customRowIndex = 54;
-    }
-    for (var j = 0; j < derivedData.length; j++) {
-      sheet
-          .cell(CellIndex.indexByColumnRow(
-              columnIndex: customColumnIndex, rowIndex: customRowIndex))
-          .value = TextCellValue(derivedData[j]);
-      customColumnIndex++;
-    }
-  }
+  // for (var i = 0; i < matchData.length; i++) {
+  //   List row = matchData[i][i.toString()];
+
+  //   List derivedData = deriveTimeDifference(matchDetails.perTimes);
+  //   customColumnIndex = 1;
+  //   if (i == 0) {
+  //     customRowIndex = 5;
+  //   }
+  //   if (i == 1) {
+  //     customRowIndex = 12;
+  //   }
+  //   if (i == 2) {
+  //     customRowIndex = 19;
+  //   }
+  //   if (i == 3) {
+  //     customRowIndex = 26;
+  //   }
+  //   if (i == 4) {
+  //     customRowIndex = 33;
+  //   }
+  //   if (i == 5) {
+  //     customRowIndex = 40;
+  //   }
+  //   if (i == 6) {
+  //     customRowIndex = 47;
+  //   }
+  //   if (i == 7) {
+  //     customRowIndex = 54;
+  //   }
+  //   for (var j = 0; j < derivedData.length; j++) {
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(
+  //             columnIndex: customColumnIndex, rowIndex: customRowIndex))
+  //         .value = TextCellValue(derivedData[j]);
+  //     customColumnIndex++;
+  //   }
+  // }
   writeMatchResult(context);
   writeToExcel(excel);
 }

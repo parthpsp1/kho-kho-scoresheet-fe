@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/helpers/input_formatters.dart';
-import 'package:kho_kho_scoresheet/helpers/time_diff.dart';
+import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/about_screen.dart';
 import 'package:kho_kho_scoresheet/screens/score_sheet.dart';

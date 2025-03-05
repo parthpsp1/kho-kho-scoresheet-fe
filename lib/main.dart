@@ -21,8 +21,6 @@ void main() async {
         ),
         autoRefreshToken: true),
   );
-  final session = Supabase.instance.client.auth.currentSession;
-  print(session);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(

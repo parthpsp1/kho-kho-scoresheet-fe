@@ -7,6 +7,7 @@ class MatchDetailsProvider extends ChangeNotifier {
   String tossWinner;
   String sideChoice;
   Map<String, String> defAttackerMap = {};
+  List<Duration> perTimes = [];
 
   MatchDetailsProvider({
     this.ageGroup = 'U-14',

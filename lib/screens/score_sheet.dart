@@ -5,6 +5,7 @@ import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/excel_module.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
+import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:kho_kho_scoresheet/supabase/db_queries.dart';
@@ -887,18 +888,27 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             //       deriveSymbol(selectedSymbol),
                                             // };
                                             // allRunTimes.add(singleRunTime);
+                                            matchDetails.perTimes.add(parseTime(
+                                                '$minutes:${seconds < 10 ? '0' : ''}$seconds'));
                                             String attackerTeam = matchDetails
                                                 .defAttackerMap["ATK"]!;
                                             writeScoreOnUI(attackerTeam);
+                                            String perTime =
+                                                deriveTimeDifference(
+                                                    matchDetails.perTimes,
+                                                    selectedSymbol.toString());
+                                            matchDetails.perTimes
+                                                .add(parseTime(perTime));
                                             await SupabaseDBQuery()
                                                 .insertIntoRoundDetails(
-                                                    turnCount + 1,
-                                                    widget.matchId,
-                                                    toInt(defenderNumber)!,
-                                                    toInt(attackerNumber)!,
-                                                    wicketTime,
-                                                    "0:00",
-                                                    selectedSymbol.toString());
+                                              turnCount + 1,
+                                              widget.matchId,
+                                              toInt(defenderNumber)!,
+                                              toInt(attackerNumber)!,
+                                              wicketTime,
+                                              perTime,
+                                              selectedSymbol.toString(),
+                                            );
                                             setState(() {
                                               defenderNumber = null;
                                               attackerNumber = null;
