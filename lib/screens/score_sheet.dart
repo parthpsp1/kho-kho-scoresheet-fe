@@ -172,13 +172,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
   Widget build(BuildContext context) {
     final matchDetails =
         Provider.of<MatchDetailsProvider>(context, listen: false);
-    print("");
-    print("");
-    print("");
-    print("Check: ${matchDetails.perTimes}");
-    print("");
-    print("");
-    print("");
     int minutes = _secondsPassed ~/ 60;
     int seconds = _secondsPassed % 60;
 
@@ -903,9 +896,13 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                 deriveTimeDifference(
                                                     matchDetails.perTimes,
                                                     selectedSymbol.toString());
-                                            matchDetails.perTimes.removeLast();
-                                            matchDetails.perTimes
-                                                .add(parseTime(perTime));
+                                            if (matchDetails.perTimes.length >=
+                                                2) {
+                                              matchDetails.perTimes
+                                                  .removeLast();
+                                              matchDetails.perTimes
+                                                  .add(parseTime(perTime));
+                                            }
                                             await SupabaseDBQuery()
                                                 .insertIntoRoundDetails(
                                               turnCount + 1,
@@ -1011,6 +1008,15 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     ),
                     const SizedBox(
                       height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "${matchDetails.perTimes}",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

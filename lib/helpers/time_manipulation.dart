@@ -9,19 +9,18 @@ String deriveFirstTimeDifference(int dataLength, data) {
 
 String deriveTimeDifference(List<Duration> perTimes, String symbol) {
   // To do - Update this logic to continue the loop
-  perTimes = perTimes.reversed.toList();
   for (int i = perTimes.length - 1; i >= 0;) {
     if (symbol == 'SA' || symbol == 'L') {
       if (perTimes.length <= 2) {
         return "0:00";
       } else {
-        return calculateTimeDifference(perTimes[i], perTimes[i - 2]).toString();
+        return calculateTimeDifference(perTimes[i - 2], perTimes[i]);
       }
     } else {
       if (perTimes.length == 1) {
-        return perTimes[0].toString();
+        return formatDuration(perTimes[0]);
       } else {
-        return calculateTimeDifference(perTimes[i], perTimes[i - 1]).toString();
+        return calculateTimeDifference(perTimes[i - 1], perTimes[i]);
       }
     }
   }
@@ -29,14 +28,15 @@ String deriveTimeDifference(List<Duration> perTimes, String symbol) {
   return "0:00"; // Default return in case all conditions fail
 }
 
-Duration calculateTimeDifference(Duration time1, Duration time2) {
-  return time2 - time1;
+String calculateTimeDifference(Duration time1, Duration time2) {
+  Duration difference = time2 - time1;
+  return formatDuration(difference);
 }
 
 String formatDuration(Duration duration) {
-  String minutes = (duration.inMinutes % 60).toString();
-  String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
-  return '$minutes:$seconds';
+  int minutes = duration.inMinutes;
+  int seconds = duration.inSeconds.remainder(60);
+  return '$minutes:${seconds.toString().padLeft(2, '0')}';
 }
 
 String getDate() {
