@@ -1009,11 +1009,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     const SizedBox(
                       height: 10,
                     ),
+                    Text("Debug below:"),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(4),
                       child: Text(
-                        "${matchDetails.perTimes}",
-                      ),
+                          "[${formatMultipleDurations(matchDetails.perTimes)}]"),
                     ),
                     SizedBox(
                       height: 20,

@@ -39,6 +39,14 @@ String formatDuration(Duration duration) {
   return '$minutes:${seconds.toString().padLeft(2, '0')}';
 }
 
+String formatMultipleDurations(List<Duration> durations) {
+  return durations.map((duration) {
+    int minutes = duration.inMinutes;
+    int seconds = duration.inSeconds.remainder(60);
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }).join(', ');
+}
+
 String getDate() {
   DateTime now = DateTime.now();
   return DateFormat('dd MMM yyyy').format(now);
