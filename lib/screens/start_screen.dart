@@ -473,8 +473,9 @@ class _StartScreenState extends State<StartScreen> {
                                               ),
                                               TextButton(
                                                 onPressed: () async {
+                                                  teamANameController.clear();
+                                                  teamBNameController.clear();
                                                   Navigator.pop(context);
-
                                                   setState(() {
                                                     isLoading = true;
                                                   });
