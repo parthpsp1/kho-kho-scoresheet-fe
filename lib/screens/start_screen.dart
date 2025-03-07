@@ -28,6 +28,14 @@ class _StartScreenState extends State<StartScreen> {
   Set<String> sideChoiceSelection = {"DEF"}; // Default selection
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // To do: check if the loading screen is visible when match is ended
+    isLoading = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return isLoading == true
         ? Scaffold(
@@ -498,14 +506,16 @@ class _StartScreenState extends State<StartScreen> {
                                                           sideChoice);
                                                   matchDetails.defAttackerMap =
                                                       {
-                                                    "DEF": (tossWinner == "A" &&
-                                                            sideChoice == "DEF")
-                                                        ? "A"
-                                                        : "B",
-                                                    "ATK": (tossWinner == "A" &&
-                                                            sideChoice == "ATK")
-                                                        ? "A"
-                                                        : "B",
+                                                    "DEF": sideChoice == "DEF"
+                                                        ? tossWinner
+                                                        : (tossWinner == "A"
+                                                            ? "B"
+                                                            : "A"),
+                                                    "ATK": sideChoice == "DEF"
+                                                        ? (tossWinner == "A"
+                                                            ? "B"
+                                                            : "A")
+                                                        : tossWinner,
                                                   };
                                                   if (context.mounted) {
                                                     Navigator.of(context).pop();
