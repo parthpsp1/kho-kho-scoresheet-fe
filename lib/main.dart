@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
-import 'package:kho_kho_scoresheet/provider/scoresheet_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:kho_kho_scoresheet/secrets.dart';
 import 'package:provider/provider.dart';
@@ -14,21 +13,11 @@ void main() async {
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supbaseKey,
-    authOptions: FlutterAuthClientOptions(
-        authFlowType: AuthFlowType.pkce,
-        localStorage: SharedPreferencesLocalStorage(
-          persistSessionKey: "123213213",
-        ),
-        autoRefreshToken: true),
   );
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
         create: (context) => MatchDetailsProvider(),
-        lazy: true,
-      ),
-      ChangeNotifierProvider(
-        create: (context) => ScoresheetProvider(),
         lazy: true,
       ),
     ],

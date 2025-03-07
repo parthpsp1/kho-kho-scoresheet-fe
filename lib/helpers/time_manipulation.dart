@@ -1,13 +1,6 @@
 import 'package:intl/intl.dart';
 
-String deriveFirstTimeDifference(int dataLength, data) {
-  if (dataLength == 0) {
-    return 'No Difference';
-  }
-  return 'Difference';
-}
-
-String deriveTimeDifference(List<Duration> perTimes, String symbol) {
+String calculatePerTime(List<Duration> perTimes, String symbol) {
   // To do - Update this logic to continue the loop
   for (int i = perTimes.length - 1; i >= 0;) {
     if (symbol == 'SA' || symbol == 'L') {

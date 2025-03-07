@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/helpers/url_handler.dart';
-import 'package:remix_icon_icons/remix_icon_icons.dart';
+import 'package:remixicon/remixicon.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -17,137 +17,61 @@ class AboutScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RichText(
-                  text: const TextSpan(
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Thanks for using the app!',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 17, 27, 47),
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            GestureDetector(
-              onTap: () async {
-                openLinkedInProfileVarun();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Idea by ',
-                          style: TextStyle(
-                            color: Color.fromRGBO(17, 27, 47, 1),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'Varun Pardeshi',
-                          style: TextStyle(
-                            color: Colors.transparent,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            shadows: [
-                              Shadow(
-                                color: Colors.blue,
-                                offset: Offset(0, -2),
-                              ),
-                            ],
-                            decoration: TextDecoration.underline,
-                            decorationStyle: TextDecorationStyle.dashed,
-                            decorationThickness: 1,
-                            decorationColor: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  const Icon(
-                    RemixIcon.linkedin_box,
-                    color: Colors.blue,
-                    size: 28,
-                  )
-                ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(
+              "Credits",
+              style: TextStyle(
+                color: Color.fromARGB(255, 17, 27, 47),
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () async {
-                openLinkedInProfileParth();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Developed by ',
-                          style: TextStyle(
-                            color: Color.fromRGBO(17, 27, 47, 1),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'Parth Pujari',
-                          style: TextStyle(
-                            color: Colors.transparent,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            shadows: [
-                              Shadow(
-                                color: Colors.blue,
-                                offset: Offset(0, -2),
-                              ),
-                            ],
-                            decoration: TextDecoration.underline,
-                            decorationStyle: TextDecorationStyle.dashed,
-                            decorationThickness: 1,
-                            decorationColor: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  const Icon(
-                    RemixIcon.linkedin_box,
-                    color: Colors.blue,
-                    size: 28,
-                  )
-                ],
+          ),
+          ListTile(
+            leading: Icon(Remix.lightbulb_line),
+            titleAlignment: ListTileTitleAlignment.center,
+            title: Text(
+              "Varun Pardeshi",
+              style: TextStyle(
+                color: Color.fromRGBO(17, 27, 47, 1),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
               ),
-            )
-          ],
-        ),
+            ),
+            subtitle: Text("Ideation"),
+            trailing: Icon(
+              Remix.linkedin_fill,
+              color: Colors.blue,
+            ),
+            iconColor: Colors.blue,
+            splashColor: Colors.blue[100],
+            onTap: () => openLinkedInProfileVarun(),
+          ),
+          ListTile(
+            leading: Icon(Remix.code_s_slash_line),
+            titleAlignment: ListTileTitleAlignment.center,
+            title: Text(
+              "Parth Pujari",
+              style: TextStyle(
+                color: Color.fromRGBO(17, 27, 47, 1),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            subtitle: Text("Development"),
+            trailing: Icon(
+              Remix.linkedin_fill,
+              color: Colors.blue,
+            ),
+            iconColor: Colors.blue,
+            splashColor: Colors.blue[100],
+            onTap: () => openLinkedInProfileParth(),
+          )
+        ],
       ),
     );
   }

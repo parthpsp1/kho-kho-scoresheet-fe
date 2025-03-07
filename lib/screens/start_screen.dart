@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
-import 'package:kho_kho_scoresheet/helpers/input_formatters.dart';
+import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/about_screen.dart';
@@ -29,10 +29,14 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    runRequestPermissions();
     // To do: check if the loading screen is visible when match is ended
     isLoading = false;
+  }
+
+  Future<void> runRequestPermissions() async {
+    await requestPermissions();
   }
 
   @override
@@ -45,7 +49,7 @@ class _StartScreenState extends State<StartScreen> {
               children: [
                 LinearProgressIndicator(),
                 SizedBox(
-                  height: 20,
+                  height: 16,
                 ),
                 Text(
                   "Creating match...",
@@ -63,12 +67,12 @@ class _StartScreenState extends State<StartScreen> {
                 'Kho-Kho Scoresheet',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              titleSpacing: 20,
-              elevation: 0,
-              forceMaterialTransparency: false,
+              titleSpacing: 16,
+              toolbarHeight: 32,
+              forceMaterialTransparency: true,
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(
@@ -102,13 +106,14 @@ class _StartScreenState extends State<StartScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 16,
                       ),
                       TextFormField(
                         controller: teamANameController,
                         textCapitalization: TextCapitalization.words,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
+                          counterText: '',
                           label: const Text('Team A Name'),
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
@@ -127,16 +132,14 @@ class _StartScreenState extends State<StartScreen> {
                         },
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 16,
                       ),
                       TextFormField(
                         controller: teamBNameController,
                         textCapitalization: TextCapitalization.words,
                         keyboardType: TextInputType.text,
-                        inputFormatters: [
-                          customInputFormatters(),
-                        ],
                         decoration: InputDecoration(
+                          counterText: '',
                           label: const Text('Team B Name'),
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
@@ -155,7 +158,7 @@ class _StartScreenState extends State<StartScreen> {
                         },
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 16,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -180,7 +183,7 @@ class _StartScreenState extends State<StartScreen> {
                         ],
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 16,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,7 +272,7 @@ class _StartScreenState extends State<StartScreen> {
                         ],
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 16,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -350,7 +353,7 @@ class _StartScreenState extends State<StartScreen> {
                                                     ),
                                                   ),
                                                   const SizedBox(
-                                                    height: 20,
+                                                    height: 16,
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:

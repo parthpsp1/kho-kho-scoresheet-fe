@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
-import 'package:kho_kho_scoresheet/helpers/excel_module.dart';
-import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
@@ -23,11 +21,10 @@ class ScoreSheet extends StatefulWidget {
 int? defenderNumber;
 int? attackerNumber;
 String? selectedSymbol;
-String wicketTime = '';
+String? wicketTime;
 bool isTurnTimEnded = false;
 bool isWicketAdded = false;
 int turnCount = 0;
-int selectedPlayerNumberIndex = 0;
 bool isMatchStarted = false;
 
 Map<String, dynamic> singleTurnData = {};
@@ -82,7 +79,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
   @override
   void initState() {
     _timer = Timer(Duration.zero, () {});
-    runRequestPermissions();
     showSelectAttackerDefenderDialog();
     super.initState();
   }
@@ -164,10 +160,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
     });
   }
 
-  Future<void> runRequestPermissions() async {
-    await requestPermissions();
-  }
-
   @override
   Widget build(BuildContext context) {
     final matchDetails =
@@ -175,7 +167,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
     int minutes = _secondsPassed ~/ 60;
     int seconds = _secondsPassed % 60;
 
-    List<String> defenderAndAttacker = [""];
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: isMatchStarted == true && isWicketAdded == false
@@ -266,19 +257,19 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            createExcel(
-                              context,
-                              matchData,
-                              defenderAndAttacker,
-                              teamATurn1Score,
-                              teamATurn2Score,
-                              teamATurn3Score,
-                              teamATurn4Score,
-                              teamBTurn1Score,
-                              teamBTurn2Score,
-                              teamBTurn3Score,
-                              teamBTurn4Score,
-                            );
+                            // createExcel(
+                            //   context,
+                            //   matchData,
+                            //   defenderAndAttacker,
+                            //   teamATurn1Score,
+                            //   teamATurn2Score,
+                            //   teamATurn3Score,
+                            //   teamATurn4Score,
+                            //   teamBTurn1Score,
+                            //   teamBTurn2Score,
+                            //   teamBTurn3Score,
+                            //   teamBTurn4Score,
+                            // );
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => const StartScreen(),
@@ -610,7 +601,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             ),
                           ),
                           Text(
-                            wicketTime,
+                            wicketTime ?? '',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -789,6 +780,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                   isMatchStarted = false;
                                                   defenderNumber = null;
                                                   attackerNumber = null;
+                                                  wicketTime = '';
+                                                  selectedSymbol = null;
+                                                  isWicketAdded = false;
                                                 });
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
@@ -888,28 +882,26 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             // };
                                             // allRunTimes.add(singleRunTime);
                                             matchDetails.perTimes
-                                                .add(parseTime(wicketTime));
+                                                .add(parseTime(wicketTime!));
                                             String attackerTeam = matchDetails
                                                 .defAttackerMap["ATK"]!;
                                             writeScoreOnUI(attackerTeam);
-                                            String perTime =
-                                                deriveTimeDifference(
-                                                    matchDetails.perTimes,
-                                                    selectedSymbol.toString());
-                                            if (matchDetails.perTimes.length >=
-                                                2) {
-                                              matchDetails.perTimes
-                                                  .removeLast();
-                                              matchDetails.perTimes
-                                                  .add(parseTime(perTime));
-                                            }
+                                            String perTime = calculatePerTime(
+                                                matchDetails.perTimes,
+                                                selectedSymbol.toString());
+                                            // if (matchDetails.perTimes.length >=
+                                            //     2) {
+                                            matchDetails.perTimes.removeLast();
+                                            matchDetails.perTimes
+                                                .add(parseTime(perTime));
+                                            // }
                                             await SupabaseDBQuery()
                                                 .insertIntoRoundDetails(
                                               turnCount + 1,
                                               widget.matchId,
                                               toInt(defenderNumber)!,
                                               toInt(attackerNumber)!,
-                                              wicketTime,
+                                              wicketTime!,
                                               perTime,
                                               selectedSymbol.toString(),
                                             );
@@ -917,29 +909,34 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               defenderNumber = null;
                                               attackerNumber = null;
                                               selectedSymbol = null;
-                                              wicketTime = '';
+                                              wicketTime = null;
                                               isWicketAdded = false;
                                             });
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                behavior:
-                                                    SnackBarBehavior.floating,
-                                                duration: Duration(seconds: 1),
-                                                content: Text(
-                                                  'Data Entered',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  duration:
+                                                      Duration(seconds: 1),
+                                                  content: Text(
+                                                    'Data Entered',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
+                                                  backgroundColor: Colors.green,
+                                                  dismissDirection:
+                                                      DismissDirection
+                                                          .horizontal,
                                                 ),
-                                                backgroundColor: Colors.green,
-                                                dismissDirection:
-                                                    DismissDirection.horizontal,
-                                              ),
-                                            );
+                                              );
+                                            }
                                           } else {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
