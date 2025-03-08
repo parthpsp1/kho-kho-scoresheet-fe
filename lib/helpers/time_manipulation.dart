@@ -10,8 +10,8 @@ String calculatePerTime(List<Duration> perTimes, String symbol) {
         return calculateTimeDifference(perTimes[i - 2], perTimes[i]);
       }
     } else {
-      if (perTimes.length == 1) {
-        return formatDuration(perTimes[0]);
+      if (i == 0) {
+        return formatDuration(perTimes.last);
       }
       if (perTimes[i - 1] == Duration.zero) {
         continue;
