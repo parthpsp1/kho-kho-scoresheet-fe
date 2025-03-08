@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 String calculatePerTime(List<Duration> perTimes, String symbol) {
   // To do - Update this logic to continue the loop
-  for (int i = perTimes.length - 1; i >= 0;) {
+  for (int i = perTimes.length - 1; i >= 0; i++) {
     if (symbol == 'SA' || symbol == 'L') {
       if (perTimes.length <= 2) {
         return "0:00";
@@ -12,8 +12,12 @@ String calculatePerTime(List<Duration> perTimes, String symbol) {
     } else {
       if (perTimes.length == 1) {
         return formatDuration(perTimes[0]);
+      }
+      if (perTimes[i - 1] == Duration.zero) {
+        continue;
       } else {
-        return calculateTimeDifference(perTimes[i - 1], perTimes[i]);
+        return calculateTimeDifference(
+            perTimes[perTimes.length - i], perTimes.last);
       }
     }
   }

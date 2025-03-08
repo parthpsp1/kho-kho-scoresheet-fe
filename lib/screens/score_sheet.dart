@@ -763,6 +763,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             ),
                                             TextButton(
                                               onPressed: () {
+                                                matchDetails.perTimes.clear();
                                                 matchDetails.defAttackerMap = {
                                                   "DEF": matchDetails
                                                       .defAttackerMap["ATK"]!,

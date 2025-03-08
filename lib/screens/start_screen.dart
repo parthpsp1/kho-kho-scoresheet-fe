@@ -475,7 +475,7 @@ class _StartScreenState extends State<StartScreen> {
                                                 onPressed: () async {
                                                   teamANameController.clear();
                                                   teamBNameController.clear();
-                                                  Navigator.pop(context);
+                                                  Navigator.of(context).pop();
                                                   setState(() {
                                                     isLoading = true;
                                                   });
