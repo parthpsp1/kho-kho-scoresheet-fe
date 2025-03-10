@@ -62,4 +62,26 @@ class SupabaseDBQuery {
       throw Exception('Failed to insert toss details');
     }
   }
+
+  Future<PostgrestList> fetchMatchData(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase.from('matches').select().eq('id', matchId);
+    return response;
+  }
+
+  Future<PostgrestList> fetchMatchTurnData(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select()
+        .eq('match_id', matchId);
+    return response;
+  }
+
+  Future<PostgrestList> fetchTossWinnerDetailsForMatch(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response =
+        await supabase.from('toss_details').select().eq('match_id', matchId);
+    return response;
+  }
 }

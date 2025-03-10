@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
 import 'package:kho_kho_scoresheet/constants/symbols.dart';
 import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
+import 'package:kho_kho_scoresheet/helpers/write_to_excel.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
-import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:kho_kho_scoresheet/supabase/db_queries.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -257,79 +257,73 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            // createExcel(
-                            //   context,
-                            //   matchData,
-                            //   defenderAndAttacker,
-                            //   teamATurn1Score,
-                            //   teamATurn2Score,
-                            //   teamATurn3Score,
-                            //   teamATurn4Score,
-                            //   teamBTurn1Score,
-                            //   teamBTurn2Score,
-                            //   teamBTurn3Score,
-                            //   teamBTurn4Score,
-                            // );
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                builder: (context) => const StartScreen(),
+                                builder: (context) =>
+                                    CreateExcel(matchId: widget.matchId),
                               ),
                               (Route<dynamic> route) => false,
                             );
+                            // Navigator.of(context).pushAndRemoveUntil(
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const StartScreen(),
+                            //   ),
+                            //   (Route<dynamic> route) => false,
+                            // );
                             setState(() {
                               matchData = [];
                               turnCount = 0;
                               isMatchStarted = false;
                               clearAllScores();
                             });
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog.adaptive(
-                                  title: const Text('Exported Successfully'),
-                                  content: const Text(
-                                    'Excel exported to Downloads folder',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Okay'),
-                                    ),
-                                  ],
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    ),
-                                  ),
-                                  titlePadding: const EdgeInsets.only(
-                                    top: 20,
-                                    left: 20,
-                                    right: 20,
-                                  ),
-                                  titleTextStyle: const TextStyle(
-                                    color: Color.fromRGBO(17, 47, 27, 1),
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  contentPadding: const EdgeInsets.only(
-                                    top: 10,
-                                    left: 20,
-                                    right: 20,
-                                    bottom: 24,
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  surfaceTintColor: Colors.white,
-                                  actionsPadding: const EdgeInsets.only(
-                                    bottom: 16,
-                                    left: 20,
-                                    right: 20,
-                                    top: 10,
-                                  ),
-                                );
-                              },
-                            );
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (BuildContext context) {
+                            //     return AlertDialog.adaptive(
+                            //       title: const Text('Exported Successfully'),
+                            //       content: const Text(
+                            //         'Excel exported to Downloads folder',
+                            //       ),
+                            //       actions: [
+                            //         TextButton(
+                            //           onPressed: () {
+                            //             Navigator.of(context).pop();
+                            //           },
+                            //           child: const Text('Okay'),
+                            //         ),
+                            //       ],
+                            //       shape: const RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.all(
+                            //           Radius.circular(18),
+                            //         ),
+                            //       ),
+                            //       titlePadding: const EdgeInsets.only(
+                            //         top: 20,
+                            //         left: 20,
+                            //         right: 20,
+                            //       ),
+                            //       titleTextStyle: const TextStyle(
+                            //         color: Color.fromRGBO(17, 47, 27, 1),
+                            //         fontSize: 21,
+                            //         fontWeight: FontWeight.w600,
+                            //       ),
+                            //       contentPadding: const EdgeInsets.only(
+                            //         top: 10,
+                            //         left: 20,
+                            //         right: 20,
+                            //         bottom: 24,
+                            //       ),
+                            //       backgroundColor: Colors.white,
+                            //       surfaceTintColor: Colors.white,
+                            //       actionsPadding: const EdgeInsets.only(
+                            //         bottom: 16,
+                            //         left: 20,
+                            //         right: 20,
+                            //         top: 10,
+                            //       ),
+                            //     );
+                            //   },
+                            // );
                           },
                           style: const ButtonStyle(
                             overlayColor: WidgetStatePropertyAll(
@@ -733,7 +727,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       builder: (builder) {
                                         return AlertDialog.adaptive(
                                           title: const Text("End Turn?"),
-                                          content: const IntrinsicHeight(
+                                          content: IntrinsicHeight(
                                             child: Text(
                                               "Please confirm end of turn",
                                               style: TextStyle(
@@ -746,7 +740,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              style: const ButtonStyle(
+                                              style: ButtonStyle(
                                                 overlayColor:
                                                     WidgetStatePropertyAll(
                                                   ColorConstants
@@ -788,8 +782,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const ScoreSheet(
-                                                      matchId: -1,
+                                                        ScoreSheet(
+                                                      matchId: widget.matchId,
                                                     ),
                                                   ),
                                                 );
