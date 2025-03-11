@@ -757,7 +757,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             ),
                                             TextButton(
                                               onPressed: () {
-                                                matchDetails.perTimes.clear();
+                                                // To Do: Change perTimes to matchTimes
+                                                matchDetails.timeData.clear();
                                                 matchDetails.defAttackerMap = {
                                                   "DEF": matchDetails
                                                       .defAttackerMap["ATK"]!,
@@ -859,37 +860,21 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               wicketTime != '' &&
                                               defenderNumber != null &&
                                               attackerNumber != null) {
-                                            // Map<String, String> singleRunTime =
-                                            //     {
-                                            //   "def_number": defenderNumber,
-                                            //   "atk_number": (selectedSymbol ==
-                                            //               4 ||
-                                            //           selectedSymbol == 5 ||
-                                            //           selectedSymbol == 6 ||
-                                            //           selectedSymbol == 8 ||
-                                            //           selectedSymbol == 11 ||
-                                            //           selectedSymbol == 12)
-                                            //       ? '-'
-                                            //       : attackerNumber,
-                                            //   "run_time": wicketTime,
-                                            //   "symbol":
-                                            //       deriveSymbol(selectedSymbol),
-                                            // };
-                                            // allRunTimes.add(singleRunTime);
-                                            matchDetails.perTimes
-                                                .add(parseTime(wicketTime!));
+                                            Map<String, Duration> runTimeEntry =
+                                                {
+                                              "run_time": parseTime(wicketTime!)
+                                            };
+                                            matchDetails.timeData
+                                                .add(runTimeEntry);
                                             String attackerTeam = matchDetails
                                                 .defAttackerMap["ATK"]!;
                                             writeScoreOnUI(attackerTeam);
                                             String perTime = calculatePerTime(
-                                                matchDetails.perTimes,
+                                                matchDetails.timeData,
                                                 selectedSymbol.toString());
-                                            // if (matchDetails.perTimes.length >=
-                                            //     2) {
-                                            matchDetails.perTimes.removeLast();
-                                            matchDetails.perTimes
-                                                .add(parseTime(perTime));
-                                            // }
+                                            matchDetails
+                                                    .timeData.last["per_time"] =
+                                                parseTime(perTime);
                                             await SupabaseDBQuery()
                                                 .insertIntoRoundDetails(
                                               turnCount + 1,
@@ -1002,10 +987,28 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       height: 10,
                     ),
                     Text("Debug below:"),
-                    Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                          "[${formatMultipleDurations(matchDetails.perTimes)}]"),
+                    SizedBox(
+                      height: 100, // Adjust height as needed
+                      child: ListView.builder(
+                        scrollDirection:
+                            Axis.horizontal, // Set horizontal scrolling
+                        addRepaintBoundaries: true,
+                        itemCount: matchDetails.timeData.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Text(formatDuration(
+                                    matchDetails.timeData[index]['run_time']!)),
+                                Text(formatDuration(matchDetails.timeData[index]
+                                        ['per_time'] ??
+                                    Duration.zero)),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     SizedBox(
                       height: 20,

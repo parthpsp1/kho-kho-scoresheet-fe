@@ -1,21 +1,21 @@
 import 'package:intl/intl.dart';
 
-String calculatePerTime(List<Duration> perTimes, String symbol) {
-  int lastValidIndex = perTimes.length - 1; // Track the last valid index
+String calculatePerTime(List<Map<String, Duration>> timeData, String symbol) {
+  int lastValidIndex = timeData.length - 1; // Track the last valid index
 
-  for (int i = perTimes.length - 1; i >= 0; i--) {
+  for (int i = timeData.length - 1; i >= 0; i--) {
     if (i == 0) {
-      return formatDuration(perTimes[lastValidIndex]);
+      return formatDuration(timeData[lastValidIndex]['run_time']!);
     }
     if (symbol == 'SA' || symbol == 'L') {
       return "0:00";
     } else {
-      if (perTimes[i - 1] == Duration.zero) {
+      if (timeData[i - 1]['per_time'] == Duration.zero) {
         lastValidIndex = i; // Keep the current i if continue is used
         continue;
       } else {
-        return calculateTimeDifference(
-            perTimes[i - 1], perTimes[lastValidIndex]);
+        return calculateTimeDifference(timeData[i - 1]['run_time']!,
+            timeData[lastValidIndex]['run_time']!);
       }
     }
   }

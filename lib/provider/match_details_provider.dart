@@ -8,7 +8,7 @@ class MatchDetailsProvider extends ChangeNotifier {
   String sideChoice;
   Map<String, String> defAttackerMap = {};
   // Save perTimes i.e. wicket time t2 - t1 wicket times etc.
-  List<Duration> perTimes = [];
+  List<Map<String, Duration>> timeData = [];
 
   MatchDetailsProvider({
     this.ageGroup = 'U-14',
