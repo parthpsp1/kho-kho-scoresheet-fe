@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:excel/excel.dart' as xl;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kho_kho_scoresheet/helpers/excel_helper.dart';
 import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/supabase/db_queries.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -53,14 +54,13 @@ Future<void> readAndWriteExcel(int matchId) async {
       await SupabaseDBQuery().fetchMatchTurnData(matchId);
   PostgrestList tossData =
       await SupabaseDBQuery().fetchTossWinnerDetailsForMatch(matchId);
-  print(matchData);
-  print(matchTurnData);
-  print(tossData);
   try {
     // Define file path in Downloads directory
     String filePath =
         "/storage/emulated/0/Download/${getTimeDateForFileName()}_scoresheet.xlsx";
     File file = File(filePath);
+    List<xl.CellIndex> cellsToStyle = [];
+    List<xl.CellIndex> cellsToStyleTurnEnd = [];
 
     // Load the Excel file from assets if it doesn't exist
     if (!await file.exists()) {
@@ -81,10 +81,6 @@ Future<void> readAndWriteExcel(int matchId) async {
     // Use `excel` package to read data
     var excel = xl.Excel.decodeBytes(fileBytes);
     var sheet = excel.tables[excel.tables.keys.first]; // First sheet
-    var cellStyle = xl.CellStyle(
-      horizontalAlign: xl.HorizontalAlign.Center,
-      verticalAlign: xl.VerticalAlign.Center,
-    );
 
     // Print existing data
     print("Existing Data:");
@@ -94,30 +90,71 @@ Future<void> readAndWriteExcel(int matchId) async {
 
     if ((matchData[0]['team_a_name'] == tossData[0]['toss_winner_team_name']) &&
         tossData[0]['chosen_side'] == "DEF") {
-      List<Map<String, dynamic>> filteredData =
+      List<Map<String, dynamic>> turnOneData =
           matchTurnData.where((map) => map["turn_no"] == 1).toList();
 
-      for (int i = 0; i < filteredData.length; i++) {
+      for (int i = 0; i < turnOneData.length; i++) {
+        var defNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 33);
+        var atkNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 34);
+        var wicketTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 35);
+        var perTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 36);
+        var symbolCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 37);
+
+        // Update cells
+        sheet.updateCell(defNoCell, xl.IntCellValue(turnOneData[i]['def_no']));
+        sheet.updateCell(atkNoCell, xl.IntCellValue(turnOneData[i]['atk_no']));
         sheet.updateCell(
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 33),
-            xl.IntCellValue(filteredData[i]['def_no']),
-            cellStyle: cellStyle);
+            wicketTimeCell, xl.TextCellValue(turnOneData[i]['wicket_time']));
         sheet.updateCell(
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 34),
-            xl.IntCellValue(filteredData[i]['atk_no']),
-            cellStyle: cellStyle);
+            perTimeCell, xl.TextCellValue(turnOneData[i]['per_time']));
         sheet.updateCell(
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 35),
-            xl.TextCellValue(filteredData[i]['wicket_time']),
-            cellStyle: cellStyle);
+            symbolCell, xl.TextCellValue(turnOneData[i]['symbol']));
+
+        if (turnOneData[i]['symbol'] != "-") {
+          cellsToStyle.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        } else {
+          cellsToStyleTurnEnd.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        }
+      }
+
+      List<Map<String, dynamic>> turnTwoData =
+          matchTurnData.where((map) => map["turn_no"] == 2).toList();
+
+      for (int i = 0; i < turnTwoData.length; i++) {
+        var defNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 33);
+        var atkNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 34);
+        var wicketTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 35);
+        var perTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 36);
+        var symbolCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 37);
+
+        sheet.updateCell(defNoCell, xl.IntCellValue(turnOneData[i]['def_no']));
+        sheet.updateCell(atkNoCell, xl.IntCellValue(turnTwoData[i]['atk_no']));
         sheet.updateCell(
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 36),
-            xl.TextCellValue(filteredData[i]['per_time']),
-            cellStyle: cellStyle);
+            wicketTimeCell, xl.TextCellValue(turnTwoData[i]['wicket_time']));
         sheet.updateCell(
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 37),
-            xl.TextCellValue(filteredData[i]['symbol']),
-            cellStyle: cellStyle);
+            perTimeCell, xl.TextCellValue(turnTwoData[i]['per_time']));
+        sheet.updateCell(
+            symbolCell, xl.TextCellValue(turnTwoData[i]['symbol']));
+
+        if (turnOneData[i]['symbol'] != "-") {
+          cellsToStyle.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        } else {
+          cellsToStyleTurnEnd.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        }
       }
     }
 
@@ -147,7 +184,13 @@ Future<void> readAndWriteExcel(int matchId) async {
         cell.cellStyle = borderStyle;
       }
     }
-
+    // Try to add border and center
+    for (var cell in cellsToStyle) {
+      addDefaultCellStyle(sheet, cell.columnIndex, cell.rowIndex);
+    }
+    for (var cell in cellsToStyleTurnEnd) {
+      addThickCellStyle(sheet, cell.columnIndex, cell.rowIndex);
+    }
     // Save modified file
     List<int>? modifiedBytes = excel.encode();
     if (modifiedBytes != null) {

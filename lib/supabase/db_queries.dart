@@ -74,7 +74,8 @@ class SupabaseDBQuery {
     final response = await supabase
         .from('match_turn_details')
         .select()
-        .eq('match_id', matchId);
+        .eq('match_id', matchId)
+        .order('created_time', ascending: true); // To Do Check
     return response;
   }
 

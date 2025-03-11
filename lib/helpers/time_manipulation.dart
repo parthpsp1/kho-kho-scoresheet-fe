@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String calculatePerTime(List<Map<String, Duration>> timeData, String symbol) {
-  int lastValidIndex = timeData.length - 1; // Track the last valid index
+  int lastValidIndex = timeData.length >= 1 ? timeData.length - 1 : 1;
 
   for (int i = timeData.length - 1; i >= 0; i--) {
     if (i == 0) {
@@ -15,7 +15,7 @@ String calculatePerTime(List<Map<String, Duration>> timeData, String symbol) {
         continue;
       } else {
         return calculateTimeDifference(timeData[i - 1]['run_time']!,
-            timeData[lastValidIndex]['run_time']!);
+            timeData[timeData.length - 1]['run_time']!);
       }
     }
   }
