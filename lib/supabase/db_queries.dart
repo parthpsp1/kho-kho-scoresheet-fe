@@ -75,7 +75,7 @@ class SupabaseDBQuery {
         .from('match_turn_details')
         .select()
         .eq('match_id', matchId)
-        .order('created_time', ascending: true); // To Do Check
+        .order('created_at', ascending: true); // To Do Check
     return response;
   }
 
