@@ -673,12 +673,23 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           children: List.generate(13, (index) {
                             return SizedBox(
                               child: OutlinedButton(
+                                key: ValueKey(
+                                    selectedSymbol == symbolList[index]
+                                        ? UniqueKey()
+                                        : symbolList[index]),
                                 onPressed: () {
                                   setState(() {
-                                    selectedSymbol = symbolList[index];
-                                    if (symbolListWithoutAttackerNo
-                                        .contains(selectedSymbol)) {
+                                    if (selectedSymbol == symbolList[index]) {
+                                      // Deselect if the same symbol is selected again
+                                      selectedSymbol = null;
                                       attackerNumber = null;
+                                    } else {
+                                      // Select new symbol
+                                      selectedSymbol = symbolList[index];
+                                      if (symbolListWithoutAttackerNo
+                                          .contains(selectedSymbol)) {
+                                        attackerNumber = null;
+                                      }
                                     }
                                   });
                                 },
