@@ -88,6 +88,7 @@ Future<void> readAndWriteExcel(int matchId) async {
       print(row.map((cell) => cell?.value ?? "").join(", "));
     }
 
+    // Condition 1
     if ((matchData[0]['team_a_name'] == tossData[0]['toss_winner_team_name']) &&
         tossData[0]['chosen_side'] == "DEF") {
       List<Map<String, dynamic>> turnOneData =
@@ -107,7 +108,13 @@ Future<void> readAndWriteExcel(int matchId) async {
 
         // Update cells
         sheet.updateCell(defNoCell, xl.IntCellValue(turnOneData[i]['def_no']));
-        sheet.updateCell(atkNoCell, xl.IntCellValue(turnOneData[i]['atk_no']));
+        if (turnOneData[i]['atk_no'] != null) {
+          sheet.updateCell(
+              atkNoCell, xl.IntCellValue(turnOneData[i]['atk_no']));
+        } else {
+          sheet.updateCell(
+              atkNoCell, xl.TextCellValue(turnOneData[i]['symbol']));
+        }
         sheet.updateCell(
             wicketTimeCell, xl.TextCellValue(turnOneData[i]['wicket_time']));
         sheet.updateCell(
@@ -139,8 +146,14 @@ Future<void> readAndWriteExcel(int matchId) async {
         var symbolCell =
             xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 37);
 
-        sheet.updateCell(defNoCell, xl.IntCellValue(turnOneData[i]['def_no']));
-        sheet.updateCell(atkNoCell, xl.IntCellValue(turnTwoData[i]['atk_no']));
+        sheet.updateCell(defNoCell, xl.IntCellValue(turnTwoData[i]['def_no']));
+        if (turnTwoData[i]['atk_no'] != null) {
+          sheet.updateCell(
+              atkNoCell, xl.IntCellValue(turnTwoData[i]['atk_no']));
+        } else {
+          sheet.updateCell(
+              atkNoCell, xl.TextCellValue(turnTwoData[i]['symbol']));
+        }
         sheet.updateCell(
             wicketTimeCell, xl.TextCellValue(turnTwoData[i]['wicket_time']));
         sheet.updateCell(
@@ -149,6 +162,171 @@ Future<void> readAndWriteExcel(int matchId) async {
             symbolCell, xl.TextCellValue(turnTwoData[i]['symbol']));
 
         if (turnOneData[i]['symbol'] != "-") {
+          cellsToStyle.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        } else {
+          cellsToStyleTurnEnd.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        }
+      }
+    }
+
+    // Condition 2
+    if ((matchData[0]['team_a_name'] == tossData[0]['toss_winner_team_name']) &&
+        tossData[0]['chosen_side'] == "ATK") {
+      List<Map<String, dynamic>> turnOneData =
+          matchTurnData.where((map) => map["turn_no"] == 1).toList();
+
+      for (int i = 0; i < turnOneData.length; i++) {
+        var defNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 33);
+        var atkNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 34);
+        var wicketTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 35);
+        var perTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 36);
+        var symbolCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 37);
+
+        // Update cells
+        sheet.updateCell(defNoCell, xl.IntCellValue(turnOneData[i]['def_no']));
+        if (turnOneData[i]['atk_no'] != null) {
+          sheet.updateCell(
+              atkNoCell, xl.IntCellValue(turnOneData[i]['atk_no']));
+        } else {
+          sheet.updateCell(
+              atkNoCell, xl.TextCellValue(turnOneData[i]['symbol']));
+        }
+        sheet.updateCell(
+            wicketTimeCell, xl.TextCellValue(turnOneData[i]['wicket_time']));
+        sheet.updateCell(
+            perTimeCell, xl.TextCellValue(turnOneData[i]['per_time']));
+        sheet.updateCell(
+            symbolCell, xl.TextCellValue(turnOneData[i]['symbol']));
+
+        if (turnOneData[i]['symbol'] != "-") {
+          cellsToStyle.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        } else {
+          cellsToStyleTurnEnd.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        }
+      }
+
+      List<Map<String, dynamic>> turnTwoData =
+          matchTurnData.where((map) => map["turn_no"] == 2).toList();
+
+      for (int i = 0; i < turnTwoData.length; i++) {
+        var defNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 33);
+        var atkNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 34);
+        var wicketTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 35);
+        var perTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 36);
+        var symbolCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 37);
+
+        sheet.updateCell(defNoCell, xl.IntCellValue(turnTwoData[i]['def_no']));
+        if (turnTwoData[i]['atk_no'] != null) {
+          sheet.updateCell(
+              atkNoCell, xl.IntCellValue(turnTwoData[i]['atk_no']));
+        } else {
+          sheet.updateCell(
+              atkNoCell, xl.TextCellValue(turnTwoData[i]['symbol']));
+        }
+        sheet.updateCell(
+            wicketTimeCell, xl.TextCellValue(turnTwoData[i]['wicket_time']));
+        sheet.updateCell(
+            perTimeCell, xl.TextCellValue(turnTwoData[i]['per_time']));
+        sheet.updateCell(
+            symbolCell, xl.TextCellValue(turnTwoData[i]['symbol']));
+
+        if (turnTwoData[i]['symbol'] != "-") {
+          cellsToStyle.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        } else {
+          cellsToStyleTurnEnd.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        }
+      }
+    }
+
+    // To Write Else of this
+    if ((matchData[0]['team_a_name'] ==
+        matchData[0]['turn_3_attacking_team_name'])) {
+      List<Map<String, dynamic>> turnThreeData =
+          matchTurnData.where((map) => map["turn_no"] == 3).toList();
+
+      for (int i = 0; i < turnThreeData.length; i++) {
+        var defNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 38);
+        var atkNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 39);
+        var wicketTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 40);
+        var perTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 41);
+        var symbolCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 42);
+
+        sheet.updateCell(
+            defNoCell, xl.IntCellValue(turnThreeData[i]['def_no']));
+        if (turnThreeData[i]['atk_no'] != null) {
+          sheet.updateCell(
+              atkNoCell, xl.IntCellValue(turnThreeData[i]['atk_no']));
+        } else {
+          sheet.updateCell(
+              atkNoCell, xl.TextCellValue(turnThreeData[i]['symbol']));
+        }
+        sheet.updateCell(
+            wicketTimeCell, xl.TextCellValue(turnThreeData[i]['wicket_time']));
+        sheet.updateCell(
+            perTimeCell, xl.TextCellValue(turnThreeData[i]['per_time']));
+        sheet.updateCell(
+            symbolCell, xl.TextCellValue(turnThreeData[i]['symbol']));
+
+        if (turnThreeData[i]['symbol'] != "-") {
+          cellsToStyle.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        } else {
+          cellsToStyleTurnEnd.addAll(
+              [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
+        }
+      }
+
+      List<Map<String, dynamic>> turnFourData =
+          matchTurnData.where((map) => map["turn_no"] == 4).toList();
+      for (int i = 0; i < turnFourData.length; i++) {
+        var defNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 38);
+        var atkNoCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 39);
+        var wicketTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 40);
+        var perTimeCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 41);
+        var symbolCell =
+            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 42);
+
+        sheet.updateCell(defNoCell, xl.IntCellValue(turnFourData[i]['def_no']));
+        if (turnFourData[i]['atk_no'] != null) {
+          sheet.updateCell(
+              atkNoCell, xl.IntCellValue(turnFourData[i]['atk_no']));
+        } else {
+          sheet.updateCell(
+              atkNoCell, xl.TextCellValue(turnFourData[i]['symbol']));
+        }
+        sheet.updateCell(
+            wicketTimeCell, xl.TextCellValue(turnFourData[i]['wicket_time']));
+        sheet.updateCell(
+            perTimeCell, xl.TextCellValue(turnFourData[i]['per_time']));
+        sheet.updateCell(
+            symbolCell, xl.TextCellValue(turnFourData[i]['symbol']));
+
+        if (turnFourData[i]['symbol'] != "-") {
           cellsToStyle.addAll(
               [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
         } else {

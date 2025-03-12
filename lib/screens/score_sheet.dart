@@ -79,48 +79,74 @@ class _ScoreSheetState extends State<ScoreSheet> {
   @override
   void initState() {
     _timer = Timer(Duration.zero, () {});
-    showSelectAttackerDefenderDialog();
+    showSelectTurn3Attacker();
     super.initState();
   }
 
-  void showSelectAttackerDefenderDialog() {
+  void showSelectTurn3Attacker() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      turnCount == 2
+      turnCount == 2 // i.e. turn #3
           ? showDialog(
               context: context,
               builder: (BuildContext context) {
                 final matchDetails =
                     Provider.of<MatchDetailsProvider>(context, listen: false);
-
                 return PopScope(
                   canPop: false,
                   child: AlertDialog.adaptive(
-                    title: const Text('Choose Attacker'),
-                    content: const Text('Choose attacker for next turn'),
+                    title: const Text('Choice'),
+                    content: const Text('Choose attacking team for next turn.'),
+                    actionsAlignment: MainAxisAlignment.spaceBetween,
                     actions: [
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             matchDetails.defAttackerMap = {
                               "DEF": "B",
                               "ATK": "A"
                             };
                           });
+                          await SupabaseDBQuery().updateTurn3AttackingTeamName(
+                              widget.matchId, matchDetails.teamAName);
                           Navigator.of(context).pop();
                         },
-                        child: const Text('Team A'),
+                        style: const ButtonStyle(
+                          overlayColor: WidgetStatePropertyAll(
+                              ColorConstants.primaryOverlayColor),
+                          backgroundColor: WidgetStatePropertyAll(
+                            Colors.blue,
+                          ),
+                        ),
+                        child: Text(
+                          matchDetails.teamAName,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             matchDetails.defAttackerMap = {
                               "DEF": "A",
                               "ATK": "B"
                             };
                           });
+                          await SupabaseDBQuery().updateTurn3AttackingTeamName(
+                              widget.matchId, matchDetails.teamBName);
                           Navigator.of(context).pop();
                         },
-                        child: const Text('Team B'),
+                        style: const ButtonStyle(
+                          overlayColor: WidgetStatePropertyAll(
+                              ColorConstants.primaryOverlayColor),
+                          backgroundColor: WidgetStatePropertyAll(
+                            Colors.blue,
+                          ),
+                        ),
+                        child: Text(
+                          matchDetails.teamBName,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                     shape: const RoundedRectangleBorder(
@@ -264,12 +290,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               ),
                               (Route<dynamic> route) => false,
                             );
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const StartScreen(),
-                            //   ),
-                            //   (Route<dynamic> route) => false,
-                            // );
                             setState(() {
                               matchData = [];
                               turnCount = 0;
@@ -656,6 +676,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 onPressed: () {
                                   setState(() {
                                     selectedSymbol = symbolList[index];
+                                    if (symbolListWithoutAttackerNo
+                                        .contains(selectedSymbol)) {
+                                      attackerNumber = null;
+                                    }
                                   });
                                 },
                                 style: ButtonStyle(
@@ -859,7 +883,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               selectedSymbol != null &&
                                               wicketTime != '' &&
                                               defenderNumber != null &&
-                                              attackerNumber != null) {
+                                              ((symbolListWithoutAttackerNo
+                                                          .contains(
+                                                              selectedSymbol) &&
+                                                      attackerNumber == null) ||
+                                                  attackerNumber != null)) {
                                             Map<String, Duration> runTimeEntry =
                                                 {
                                               "run_time": parseTime(wicketTime!)
@@ -880,7 +908,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               turnCount + 1,
                                               widget.matchId,
                                               toInt(defenderNumber)!,
-                                              toInt(attackerNumber)!,
+                                              toInt(attackerNumber),
                                               wicketTime!,
                                               perTime,
                                               selectedSymbol.toString(),

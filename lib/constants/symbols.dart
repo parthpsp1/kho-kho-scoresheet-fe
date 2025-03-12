@@ -13,3 +13,12 @@ const List<String> symbolList = <String>[
   '][', //11
   '-' //12
 ];
+
+const List<String> symbolListWithoutAttackerNo = <String>[
+  "O",
+  "R",
+  "L",
+  "W",
+  "][",
+  "-"
+];

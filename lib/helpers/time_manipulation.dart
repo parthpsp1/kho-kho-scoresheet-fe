@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String calculatePerTime(List<Map<String, Duration>> timeData, String symbol) {
-  int lastValidIndex = timeData.length >= 1 ? timeData.length - 1 : 1;
+  int lastValidIndex = timeData.isNotEmpty ? timeData.length - 1 : 1;
 
   for (int i = timeData.length - 1; i >= 0; i--) {
     if (i == 0) {

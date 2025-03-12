@@ -46,7 +46,7 @@ class SupabaseDBQuery {
 
   /// Inserts round_details linked to a match ID
   Future<void> insertIntoRoundDetails(int turnNo, int matchId, int defNo,
-      int atkNo, String wicketTime, String perTime, String symbol) async {
+      int? atkNo, String wicketTime, String perTime, String symbol) async {
     try {
       await supabase.from('match_turn_details').insert({
         'def_no': defNo,
@@ -60,6 +60,18 @@ class SupabaseDBQuery {
     } catch (error) {
       print('Error inserting toss details: $error');
       throw Exception('Failed to insert toss details');
+    }
+  }
+
+  /// Updates turn_3_attacking_team_name for a specific match ID
+  Future<void> updateTurn3AttackingTeamName(
+      int matchId, String attackingTeamName) async {
+    try {
+      await supabase.from('matches').update(
+          {'turn_3_attacking_team_name': attackingTeamName}).eq('id', matchId);
+    } catch (error) {
+      print('Error updating turn 3 attacking team name: $error');
+      throw Exception('Failed to update turn 3 attacking team name');
     }
   }
 
