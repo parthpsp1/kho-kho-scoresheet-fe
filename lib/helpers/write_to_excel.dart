@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kho_kho_scoresheet/helpers/excel_helper.dart';
 import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
+import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:kho_kho_scoresheet/supabase/db_queries.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,7 +22,17 @@ class _CreateExcelState extends State<CreateExcel> {
   @override
   void initState() {
     super.initState();
-    readAndWriteExcel(widget.matchId);
+    _processExcel();
+  }
+
+  Future<void> _processExcel() async {
+    await readAndWriteExcel(widget.matchId);
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => StartScreen()),
+      );
+    }
   }
 
   @override
@@ -36,7 +47,7 @@ class _CreateExcelState extends State<CreateExcel> {
             height: 16,
           ),
           Text(
-            "Creating excel",
+            "Generating Excel...",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
