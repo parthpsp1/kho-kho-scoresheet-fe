@@ -296,54 +296,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               isMatchStarted = false;
                               clearAllScores();
                             });
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (BuildContext context) {
-                            //     return AlertDialog.adaptive(
-                            //       title: const Text('Exported Successfully'),
-                            //       content: const Text(
-                            //         'Excel exported to Downloads folder',
-                            //       ),
-                            //       actions: [
-                            //         TextButton(
-                            //           onPressed: () {
-                            //             Navigator.of(context).pop();
-                            //           },
-                            //           child: const Text('Okay'),
-                            //         ),
-                            //       ],
-                            //       shape: const RoundedRectangleBorder(
-                            //         borderRadius: BorderRadius.all(
-                            //           Radius.circular(18),
-                            //         ),
-                            //       ),
-                            //       titlePadding: const EdgeInsets.only(
-                            //         top: 20,
-                            //         left: 20,
-                            //         right: 20,
-                            //       ),
-                            //       titleTextStyle: const TextStyle(
-                            //         color: Color.fromRGBO(17, 47, 27, 1),
-                            //         fontSize: 21,
-                            //         fontWeight: FontWeight.w600,
-                            //       ),
-                            //       contentPadding: const EdgeInsets.only(
-                            //         top: 10,
-                            //         left: 20,
-                            //         right: 20,
-                            //         bottom: 24,
-                            //       ),
-                            //       backgroundColor: Colors.white,
-                            //       surfaceTintColor: Colors.white,
-                            //       actionsPadding: const EdgeInsets.only(
-                            //         bottom: 16,
-                            //         left: 20,
-                            //         right: 20,
-                            //         top: 10,
-                            //       ),
-                            //     );
-                            //   },
-                            // );
                           },
                           style: const ButtonStyle(
                             overlayColor: WidgetStatePropertyAll(
