@@ -45,6 +45,7 @@ dependencies:
   supabase_flutter: ^2.8.4
   syncfusion_flutter_xlsio: ^28.2.9
   url_launcher: ^6.2.5
+  wakelock_plus: ^1.2.10
 
 dev_dependencies:
 
