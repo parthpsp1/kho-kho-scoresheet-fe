@@ -291,9 +291,15 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               (Route<dynamic> route) => false,
                             );
                             setState(() {
+                              matchDetails.timeData.clear();
                               matchData = [];
                               turnCount = 0;
                               isMatchStarted = false;
+                              isWicketAdded = false;
+                              selectedSymbol = null;
+                              wicketTime = null;
+                              attackerNumber = null;
+                              defenderNumber = null;
                               clearAllScores();
                             });
                           },

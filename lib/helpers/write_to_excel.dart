@@ -328,17 +328,43 @@ Future<void> readAndWriteExcel(int matchId) async {
       List<Map<String, dynamic>> turnThreeData =
           matchTurnData.where((map) => map["turn_no"] == 3).toList();
 
+      int turnThreeDataColumnIndex = 2;
+      int turnThreeDataMaxColumns = 19;
+      int turnThreeDataBaseRowIndex = 33;
+
       for (int i = 0; i < turnThreeData.length; i++) {
-        var defNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 38);
-        var atkNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 39);
-        var wicketTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 40);
-        var perTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 41);
-        var symbolCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 42);
+        // Find the next available column
+        while (turnThreeDataColumnIndex <= turnThreeDataMaxColumns) {
+          var cell = sheet.cell(xl.CellIndex.indexByColumnRow(
+              columnIndex: turnThreeDataColumnIndex,
+              rowIndex: turnThreeDataBaseRowIndex));
+          if (cell.value == null || cell.value.toString().isEmpty) {
+            break; // Found an empty cell
+          }
+          turnThreeDataColumnIndex++;
+        }
+
+        // If all columns are filled, reset column and move to the next row set
+        if (turnThreeDataColumnIndex > turnThreeDataMaxColumns) {
+          turnThreeDataColumnIndex = 2; // Reset column
+          turnThreeDataBaseRowIndex += 5; // Move to next set of rows
+        }
+
+        var defNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex);
+        var atkNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 1);
+        var wicketTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 2);
+        var perTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 3);
+        var symbolCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 4);
 
         sheet.updateCell(
             defNoCell, xl.IntCellValue(turnThreeData[i]['def_no']));
@@ -363,21 +389,51 @@ Future<void> readAndWriteExcel(int matchId) async {
           cellsToStyleTurnEnd.addAll(
               [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
         }
+
+        // Move to next column for next iteration
+        turnThreeDataColumnIndex++;
       }
 
       List<Map<String, dynamic>> turnFourData =
           matchTurnData.where((map) => map["turn_no"] == 4).toList();
+
+      int turnFourDataColumnIndex = 22;
+      int turnFourDataMaxColumns = 39;
+      int turnFourDataBaseRowIndex = 33;
+
       for (int i = 0; i < turnFourData.length; i++) {
-        var defNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 38);
-        var atkNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 39);
-        var wicketTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 40);
-        var perTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 41);
-        var symbolCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 42);
+        // Find the next available column
+        while (turnFourDataColumnIndex <= turnFourDataMaxColumns) {
+          var cell = sheet.cell(xl.CellIndex.indexByColumnRow(
+              columnIndex: turnFourDataColumnIndex,
+              rowIndex: turnFourDataBaseRowIndex));
+          if (cell.value == null || cell.value.toString().isEmpty) {
+            break; // Found an empty cell
+          }
+          turnFourDataColumnIndex++;
+        }
+
+        // If all columns are filled, reset column and move to the next row set
+        if (turnFourDataColumnIndex > turnFourDataMaxColumns) {
+          turnFourDataColumnIndex = 22; // Reset column
+          turnFourDataBaseRowIndex += 5; // Move to next set of rows
+        }
+
+        var defNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex);
+        var atkNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 1);
+        var wicketTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 2);
+        var perTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 3);
+        var symbolCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 4);
 
         sheet.updateCell(defNoCell, xl.IntCellValue(turnFourData[i]['def_no']));
         if (turnFourData[i]['atk_no'] != null) {
@@ -401,22 +457,51 @@ Future<void> readAndWriteExcel(int matchId) async {
           cellsToStyleTurnEnd.addAll(
               [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
         }
+
+        // Move to next column for next iteration
+        turnFourDataColumnIndex++;
       }
     } else {
       List<Map<String, dynamic>> turnThreeData =
           matchTurnData.where((map) => map["turn_no"] == 3).toList();
 
+      int turnThreeDataColumnIndex = 22;
+      int turnThreeDataMaxColumns = 39;
+      int turnThreeDataBaseRowIndex = 33;
+
       for (int i = 0; i < turnThreeData.length; i++) {
-        var defNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 38);
-        var atkNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 39);
-        var wicketTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 40);
-        var perTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 41);
-        var symbolCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 22 + i, rowIndex: 42);
+        // Find the next available column
+        while (turnThreeDataColumnIndex <= turnThreeDataMaxColumns) {
+          var cell = sheet.cell(xl.CellIndex.indexByColumnRow(
+              columnIndex: turnThreeDataColumnIndex,
+              rowIndex: turnThreeDataBaseRowIndex));
+          if (cell.value == null || cell.value.toString().isEmpty) {
+            break; // Found an empty cell
+          }
+          turnThreeDataColumnIndex++;
+        }
+
+        // If all columns are filled, reset column and move to the next row set
+        if (turnThreeDataColumnIndex > turnThreeDataMaxColumns) {
+          turnThreeDataColumnIndex = 22; // Reset column
+          turnThreeDataBaseRowIndex += 5; // Move to next set of rows
+        }
+
+        var defNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex);
+        var atkNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 1);
+        var wicketTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 2);
+        var perTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 3);
+        var symbolCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnThreeDataColumnIndex,
+            rowIndex: turnThreeDataBaseRowIndex + 4);
 
         sheet.updateCell(
             defNoCell, xl.IntCellValue(turnThreeData[i]['def_no']));
@@ -441,21 +526,51 @@ Future<void> readAndWriteExcel(int matchId) async {
           cellsToStyleTurnEnd.addAll(
               [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
         }
+
+        // Move to next column for next iteration
+        turnThreeDataColumnIndex++;
       }
 
       List<Map<String, dynamic>> turnFourData =
           matchTurnData.where((map) => map["turn_no"] == 4).toList();
+
+      int turnFourDataColumnIndex = 2;
+      int turnFourDataMaxColumns = 19;
+      int turnFourDataBaseRowIndex = 33;
+
       for (int i = 0; i < turnFourData.length; i++) {
-        var defNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 38);
-        var atkNoCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 39);
-        var wicketTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 40);
-        var perTimeCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 41);
-        var symbolCell =
-            xl.CellIndex.indexByColumnRow(columnIndex: 2 + i, rowIndex: 42);
+        // Find the next available column
+        while (turnFourDataColumnIndex <= turnFourDataMaxColumns) {
+          var cell = sheet.cell(xl.CellIndex.indexByColumnRow(
+              columnIndex: turnFourDataColumnIndex,
+              rowIndex: turnFourDataBaseRowIndex));
+          if (cell.value == null || cell.value.toString().isEmpty) {
+            break; // Found an empty cell
+          }
+          turnFourDataColumnIndex++;
+        }
+
+        // If all columns are filled, reset column and move to the next row set
+        if (turnFourDataColumnIndex > turnFourDataMaxColumns) {
+          turnFourDataColumnIndex = 2; // Reset column
+          turnFourDataBaseRowIndex += 5; // Move to next set of rows
+        }
+
+        var defNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex);
+        var atkNoCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 1);
+        var wicketTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 2);
+        var perTimeCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 3);
+        var symbolCell = xl.CellIndex.indexByColumnRow(
+            columnIndex: turnFourDataColumnIndex,
+            rowIndex: turnFourDataBaseRowIndex + 4);
 
         sheet.updateCell(defNoCell, xl.IntCellValue(turnFourData[i]['def_no']));
         if (turnFourData[i]['atk_no'] != null) {
@@ -479,6 +594,9 @@ Future<void> readAndWriteExcel(int matchId) async {
           cellsToStyleTurnEnd.addAll(
               [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
         }
+
+        // Move to next column for next iteration
+        turnFourDataColumnIndex++;
       }
     }
 
