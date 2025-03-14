@@ -764,7 +764,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
     cellToStyleTeamNames.add(cellToUpdateTeamBName);
 
-    //Write to points table
+    //Write to points table to do rest
     PostgrestList atkSideATurnData =
         await SupabaseDBQuery().fetchTeamAAttackTurns(matchId);
 
