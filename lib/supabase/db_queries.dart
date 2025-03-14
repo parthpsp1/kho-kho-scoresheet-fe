@@ -147,4 +147,28 @@ class SupabaseDBQuery {
         .eq('atk_team_side', 'B');
     return response;
   }
+
+  Future<PostgrestList> fetchTeamAAttackTurns(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select('*')
+        .eq('match_id', 193)
+        .eq('turn_no', 1)
+        .eq('atk_team_side', 'A')
+        .not('symbol', 'in', ['][', '-']);
+    return response;
+  }
+
+  Future<PostgrestList> fetchTeamBAttackTurns(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select('*')
+        .eq('match_id', 193)
+        .eq('turn_no', 1)
+        .eq('atk_team_side', 'B')
+        .not('symbol', 'in', ['][', '-']);
+    return response;
+  }
 }

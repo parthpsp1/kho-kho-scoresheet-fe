@@ -764,6 +764,30 @@ Future<void> readAndWriteExcel(int matchId) async {
 
     cellToStyleTeamNames.add(cellToUpdateTeamBName);
 
+    //Write to points table
+    PostgrestList atkSideATurnData =
+        await SupabaseDBQuery().fetchTeamAAttackTurns(matchId);
+
+    int pointTableAtkSideADataColumnIndex = 3;
+    int pointTableDataRowIndex = 44;
+    for (int i = 1; i <= 8; i++) {
+      List<Map<String, dynamic>> turnWiseData =
+          atkSideATurnData.where((map) => map["turn_no"] == i).toList();
+
+      if (turnWiseData.isEmpty) {
+        continue;
+      }
+
+      var cellToUpdate = xl.CellIndex.indexByColumnRow(
+          columnIndex: pointTableAtkSideADataColumnIndex,
+          rowIndex: pointTableDataRowIndex);
+
+      sheet.updateCell(cellToUpdate, xl.IntCellValue(turnWiseData.length));
+
+      cellsToStyle.add(cellToUpdate);
+      pointTableAtkSideADataColumnIndex++;
+    }
+
     // Apply borders from Row 47 to Column 40
     var borderStyle = xl.CellStyle(
       bottomBorder: xl.Border(
