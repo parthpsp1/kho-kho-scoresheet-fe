@@ -45,12 +45,22 @@ class SupabaseDBQuery {
   }
 
   /// Inserts round_details linked to a match ID
-  Future<void> insertIntoRoundDetails(int turnNo, int matchId, int defNo,
-      int? atkNo, String wicketTime, String perTime, String symbol) async {
+  Future<void> insertIntoRoundDetails(
+      int turnNo,
+      int matchId,
+      int defNo,
+      String defTeamName,
+      int? atkNo,
+      String? atkTeamName,
+      String wicketTime,
+      String perTime,
+      String symbol) async {
     try {
       await supabase.from('match_turn_details').insert({
         'def_no': defNo,
+        'def_team_side': defTeamName,
         'atk_no': atkNo,
+        'atk_team_side': atkTeamName,
         'wicket_time': wicketTime,
         'symbol': symbol,
         'turn_no': turnNo,
@@ -95,6 +105,26 @@ class SupabaseDBQuery {
     final supabase = Supabase.instance.client;
     final response =
         await supabase.from('toss_details').select().eq('match_id', matchId);
+    return response;
+  }
+
+  Future<PostgrestList> fetchDefSideA(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select()
+        .eq('match_id', matchId)
+        .eq('def_team_side', 'A');
+    return response;
+  }
+
+  Future<PostgrestList> fetchDefSideB(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select()
+        .eq('match_id', matchId)
+        .eq('def_team_side', 'B');
     return response;
   }
 }

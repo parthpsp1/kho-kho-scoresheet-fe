@@ -600,6 +600,51 @@ Future<void> readAndWriteExcel(int matchId) async {
       }
     }
 
+    // Playerwise Data here
+    PostgrestList defSideAData = await SupabaseDBQuery().fetchDefSideA(matchId);
+
+    int playerWiseADataColumnIndex = 9;
+    for (int i = 1; i <= 15; i++) {
+      List<Map<String, dynamic>> playerWiseData =
+          defSideAData.where((map) => map["def_no"] == i).toList();
+      int playerWiseDataRowIndex = 10;
+      if (playerWiseData.isNotEmpty) {
+        for (int j = 0; j < playerWiseData.length; j++) {
+          var cellToUpdate = xl.CellIndex.indexByColumnRow(
+              columnIndex: playerWiseADataColumnIndex,
+              rowIndex: playerWiseDataRowIndex);
+
+          sheet.updateCell(
+              cellToUpdate, xl.TextCellValue(playerWiseData[j]['per_time']));
+
+          playerWiseADataColumnIndex++;
+        }
+      }
+      playerWiseDataRowIndex++;
+    }
+
+    PostgrestList defSideBData = await SupabaseDBQuery().fetchDefSideB(matchId);
+
+    int playerWiseBDataRowIndex = 10;
+    for (int i = 1; i <= 15; i++) {
+      List<Map<String, dynamic>> playerWiseData =
+          defSideBData.where((map) => map["def_no"] == i).toList();
+      int playerWiseDataColumnIndex = 29;
+      if (playerWiseData.isNotEmpty) {
+        for (int j = 0; j < playerWiseData.length; j++) {
+          var cellToUpdate = xl.CellIndex.indexByColumnRow(
+              columnIndex: playerWiseDataColumnIndex,
+              rowIndex: playerWiseBDataRowIndex);
+
+          sheet.updateCell(
+              cellToUpdate, xl.TextCellValue(playerWiseData[j]['per_time']));
+
+          playerWiseDataColumnIndex++;
+        }
+      }
+      playerWiseBDataRowIndex++;
+    }
+
     // Apply borders from Row 47 to Column 40
     var borderStyle = xl.CellStyle(
       bottomBorder: xl.Border(

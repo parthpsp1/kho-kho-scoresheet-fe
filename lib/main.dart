@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kho_kho_scoresheet/helpers/write_to_excel.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
-import 'package:kho_kho_scoresheet/screens/start_screen.dart';
 import 'package:kho_kho_scoresheet/secrets.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -40,7 +40,9 @@ class KhoKhoScoresheet extends StatelessWidget {
           backgroundColor: Colors.white,
         ),
       ),
-      home: StartScreen(),
+      home: CreateExcel(
+        matchId: 192,
+      ),
     );
   }
 }

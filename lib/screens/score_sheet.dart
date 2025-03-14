@@ -877,7 +877,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               turnCount + 1,
                                               widget.matchId,
                                               toInt(defenderNumber)!,
+                                              matchDetails
+                                                  .defAttackerMap["DEF"]!,
                                               toInt(attackerNumber),
+                                              matchDetails
+                                                  .defAttackerMap["ATK"],
                                               wicketTime!,
                                               perTime,
                                               selectedSymbol.toString(),
