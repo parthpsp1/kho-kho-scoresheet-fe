@@ -118,6 +118,16 @@ class SupabaseDBQuery {
     return response;
   }
 
+  Future<PostgrestList> fetchAtkSideA(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select()
+        .eq('match_id', matchId)
+        .eq('atk_team_side', 'A');
+    return response;
+  }
+
   Future<PostgrestList> fetchDefSideB(int matchId) async {
     final supabase = Supabase.instance.client;
     final response = await supabase
@@ -125,6 +135,16 @@ class SupabaseDBQuery {
         .select()
         .eq('match_id', matchId)
         .eq('def_team_side', 'B');
+    return response;
+  }
+
+  Future<PostgrestList> fetchAtkSideB(int matchId) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('match_turn_details')
+        .select()
+        .eq('match_id', matchId)
+        .eq('atk_team_side', 'B');
     return response;
   }
 }
