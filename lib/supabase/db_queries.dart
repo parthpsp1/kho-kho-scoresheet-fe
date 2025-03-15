@@ -153,8 +153,7 @@ class SupabaseDBQuery {
     final response = await supabase
         .from('match_turn_details')
         .select('*')
-        .eq('match_id', 193)
-        .eq('turn_no', 1)
+        .eq('match_id', matchId)
         .eq('atk_team_side', 'A')
         .not('symbol', 'in', ['][', '-']);
     return response;
@@ -165,8 +164,7 @@ class SupabaseDBQuery {
     final response = await supabase
         .from('match_turn_details')
         .select('*')
-        .eq('match_id', 193)
-        .eq('turn_no', 1)
+        .eq('match_id', matchId)
         .eq('atk_team_side', 'B')
         .not('symbol', 'in', ['][', '-']);
     return response;

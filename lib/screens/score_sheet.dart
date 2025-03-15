@@ -195,47 +195,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      floatingActionButton: isMatchStarted == true && isWicketAdded == false
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                setState(() {
-                  wicketTime = '$minutes:${seconds < 10 ? '0' : ''}$seconds';
-                  isWicketAdded = true;
-                });
-              },
-              label: Text(
-                'Add Wicket',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              elevation: 4,
-              backgroundColor: Colors.green,
-            )
-          : isMatchStarted == true && isWicketAdded == true
-              ? FloatingActionButton.extended(
-                  onPressed: () {
-                    setState(() {
-                      isWicketAdded = false;
-                      wicketTime = '';
-                      defenderNumber = null;
-                      attackerNumber = null;
-                    });
-                  },
-                  label: Text(
-                    'Cancel Wicket',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  icon: Icon(
-                    Icons.cancel_outlined,
-                    color: Colors.white,
-                  ),
-                  elevation: 4,
-                  backgroundColor: Colors.red,
-                )
-              : const SizedBox(),
       appBar: AppBar(
         title: const Text(
           'Kho-Kho Scoresheet',
@@ -977,6 +936,66 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     const SizedBox(
                       height: 16,
                     ),
+                    isMatchStarted == true && isWicketAdded == false
+                        ? Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: SizedBox(
+                              height: 50,
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      wicketTime =
+                                          '$minutes:${seconds < 10 ? '0' : ''}$seconds';
+                                      isWicketAdded = true;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                  label: Text(
+                                    "Add Wicket",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                      Colors.green,
+                                    ),
+                                  )),
+                            ),
+                          )
+                        : isMatchStarted == true && isWicketAdded == true
+                            ? Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      setState(() {
+                                        isWicketAdded = false;
+                                        wicketTime = '';
+                                        defenderNumber = null;
+                                        attackerNumber = null;
+                                      });
+                                    },
+                                    label: Text(
+                                      'Cancel Wicket',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    icon: Icon(
+                                      Icons.cancel_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          WidgetStatePropertyAll(Colors.red),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
                     const Text(
                       'Match Score Sheet',
                       style: TextStyle(
@@ -986,33 +1005,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                     ),
                     const SizedBox(
                       height: 10,
-                    ),
-                    Text("Debug below:"),
-                    SizedBox(
-                      height: 100, // Adjust height as needed
-                      child: ListView.builder(
-                        scrollDirection:
-                            Axis.horizontal, // Set horizontal scrolling
-                        addRepaintBoundaries: true,
-                        itemCount: matchDetails.timeData.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Text(formatDuration(
-                                    matchDetails.timeData[index]['run_time']!)),
-                                Text(formatDuration(matchDetails.timeData[index]
-                                        ['per_time'] ??
-                                    Duration.zero)),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

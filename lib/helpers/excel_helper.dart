@@ -50,6 +50,7 @@ var cellStyleTeamNames = CellStyle(
       borderStyle: BorderStyle.Thick,
       borderColorHex: ExcelColor.fromHexString("000000")),
 );
+
 addDefaultCellStyle(sheet, col, row) {
   var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
   var cell = sheet.cell(cellIndex);

@@ -131,6 +131,8 @@ Future<void> readAndWriteExcel(int matchId) async {
     List<xl.CellIndex> cellsToStyleTurnEnd = [];
     List<xl.CellIndex> cellToStyleIndividualNotOutStyle = [];
     List<xl.CellIndex> cellToStyleTeamNames = [];
+    List<int> TeamATurnScores = [];
+    List<int> TeamBTurnScores = [];
 
     // Load the Excel file from assets if it doesn't exist
     if (!await file.exists()) {
@@ -769,7 +771,7 @@ Future<void> readAndWriteExcel(int matchId) async {
         await SupabaseDBQuery().fetchTeamAAttackTurns(matchId);
 
     int pointTableAtkSideADataColumnIndex = 3;
-    int pointTableDataRowIndex = 44;
+    int pointTableDataRowAIndex = 44;
     for (int i = 1; i <= 8; i++) {
       List<Map<String, dynamic>> turnWiseData =
           atkSideATurnData.where((map) => map["turn_no"] == i).toList();
@@ -780,13 +782,66 @@ Future<void> readAndWriteExcel(int matchId) async {
 
       var cellToUpdate = xl.CellIndex.indexByColumnRow(
           columnIndex: pointTableAtkSideADataColumnIndex,
-          rowIndex: pointTableDataRowIndex);
+          rowIndex: pointTableDataRowAIndex);
 
       sheet.updateCell(cellToUpdate, xl.IntCellValue(turnWiseData.length));
+
+      TeamATurnScores.add(turnWiseData.length);
 
       cellsToStyle.add(cellToUpdate);
       pointTableAtkSideADataColumnIndex++;
     }
+
+    PostgrestList atkSideBTurnData =
+        await SupabaseDBQuery().fetchTeamBAttackTurns(matchId);
+
+    int pointTableAtkSideBDataColumnIndex = 3;
+    int pointTableDataRowBIndex = 45;
+    for (int i = 1; i <= 8; i++) {
+      List<Map<String, dynamic>> turnWiseData =
+          atkSideBTurnData.where((map) => map["turn_no"] == i).toList();
+
+      if (turnWiseData.isEmpty) {
+        continue;
+      }
+
+      var cellToUpdate = xl.CellIndex.indexByColumnRow(
+          columnIndex: pointTableAtkSideBDataColumnIndex,
+          rowIndex: pointTableDataRowBIndex);
+
+      sheet.updateCell(cellToUpdate, xl.IntCellValue(turnWiseData.length));
+
+      TeamBTurnScores.add(turnWiseData.length);
+
+      cellsToStyle.add(cellToUpdate);
+      pointTableAtkSideBDataColumnIndex++;
+    }
+
+    int teamATotalScoreColumnIndex = 11;
+    int teamATotalScoreRowIndex = 44;
+
+    var cellToUpdateTotalScoreTeamA = xl.CellIndex.indexByColumnRow(
+        columnIndex: teamATotalScoreColumnIndex,
+        rowIndex: teamATotalScoreRowIndex);
+
+    sheet.updateCell(
+        cellToUpdateTotalScoreTeamA,
+        xl.IntCellValue(TeamATurnScores.fold(
+            0, (previous, current) => previous + current)));
+    cellsToStyle.add(cellToUpdateTotalScoreTeamA);
+
+    int teamBTotalScoreColumnIndex = 11;
+    int teamBTotalScoreRowIndex = 45;
+
+    var cellToUpdateTotalScoreTeamB = xl.CellIndex.indexByColumnRow(
+        columnIndex: teamBTotalScoreColumnIndex,
+        rowIndex: teamBTotalScoreRowIndex);
+
+    sheet.updateCell(
+        cellToUpdateTotalScoreTeamB,
+        xl.IntCellValue(TeamBTurnScores.fold(
+            0, (previous, current) => previous + current)));
+    cellsToStyle.add(cellToUpdateTotalScoreTeamB);
 
     // Apply borders from Row 47 to Column 40
     var borderStyle = xl.CellStyle(
