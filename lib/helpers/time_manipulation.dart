@@ -65,17 +65,20 @@ Duration parseTime(String time) {
 }
 
 String formatDate(String dateString) {
-  DateTime dateTime = DateTime.parse(dateString);
+  DateTime dateTime =
+      DateTime.parse(dateString).toUtc().add(Duration(hours: 5, minutes: 30));
   return DateFormat('dd/MM/yyyy').format(dateTime);
 }
 
 String formatTime(String dateString) {
-  DateTime dateTime = DateTime.parse(dateString);
+  DateTime dateTime =
+      DateTime.parse(dateString).toUtc().add(Duration(hours: 5, minutes: 30));
   return DateFormat('HH:mm:ss').format(dateTime);
 }
 
 String getTimeOfDay(String dateString) {
-  DateTime dateTime = DateTime.parse(dateString);
+  DateTime dateTime =
+      DateTime.parse(dateString).toUtc().add(Duration(hours: 5, minutes: 30));
   int hour = dateTime.hour;
 
   if (hour >= 5 && hour < 12) {

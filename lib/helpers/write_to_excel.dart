@@ -656,6 +656,14 @@ Future<void> readAndWriteExcel(int matchId) async {
 
     cellToStyleTeamNames.add(cellToUpdateTeamAName);
 
+    var cellToUpdateTeamAName2 =
+        xl.CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 9);
+
+    sheet.updateCell(cellToUpdateTeamAName2,
+        xl.TextCellValue("Team A : ${matchData[0]['team_a_name']}"));
+
+    cellToStyleTeamNames.add(cellToUpdateTeamAName2);
+
     var cellToUpdateTeamBName =
         xl.CellIndex.indexByColumnRow(columnIndex: 21, rowIndex: 7);
 
@@ -663,6 +671,14 @@ Future<void> readAndWriteExcel(int matchId) async {
         xl.TextCellValue("Team B: ${matchData[0]['team_b_name']}"));
 
     cellToStyleTeamNames.add(cellToUpdateTeamBName);
+
+    var cellToUpdateTeamBName2 =
+        xl.CellIndex.indexByColumnRow(columnIndex: 22, rowIndex: 9);
+
+    sheet.updateCell(cellToUpdateTeamBName2,
+        xl.TextCellValue("Team B: ${matchData[0]['team_b_name']}"));
+
+    cellToStyleTeamNames.add(cellToUpdateTeamBName2);
 
     //Write to points table to do rest
     PostgrestList atkSideATurnData =
@@ -687,7 +703,7 @@ Future<void> readAndWriteExcel(int matchId) async {
       teamATurnScores.add(turnWiseData.length);
 
       cellToStylePointsTable.add(cellToUpdate);
-      pointTableAtkSideADataColumnIndex++;
+      pointTableAtkSideADataColumnIndex += 2;
     }
 
     PostgrestList atkSideBTurnData =
@@ -712,7 +728,7 @@ Future<void> readAndWriteExcel(int matchId) async {
       teamBTurnScores.add(turnWiseData.length);
 
       cellToStylePointsTable.add(cellToUpdate);
-      pointTableAtkSideBDataColumnIndex++;
+      pointTableAtkSideBDataColumnIndex += 2;
     }
 
     int teamATotalScoreColumnIndex = 11;
@@ -744,14 +760,22 @@ Future<void> readAndWriteExcel(int matchId) async {
     var cellToUpdateWinnerTeam =
         xl.CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 46);
 
-    if (teamATurnScores.fold(0, (previous, current) => previous + current) >
-        teamBTurnScores.fold(0, (previous, current) => previous + current)) {
-      sheet.updateCell(cellToUpdateWinnerTeam,
-          xl.TextCellValue("RESULT: ${matchData[0]['team_a_name']}"));
+    int teamATotalScore =
+        teamATurnScores.fold(0, (previous, current) => previous + current);
+    int teamBTotalScore =
+        teamBTurnScores.fold(0, (previous, current) => previous + current);
+
+    if (teamATotalScore > teamBTotalScore) {
+      sheet.updateCell(
+          cellToUpdateWinnerTeam,
+          xl.TextCellValue(
+              "RESULT: Team (A) ${matchData[0]['team_a_name']} won by ${teamATotalScore - teamBTotalScore} point(s)."));
       cellsToStyle.add(cellToUpdateWinnerTeam);
     } else {
-      sheet.updateCell(cellToUpdateWinnerTeam,
-          xl.TextCellValue("RESULT : ${matchData[0]['team_b_name']}"));
+      sheet.updateCell(
+          cellToUpdateWinnerTeam,
+          xl.TextCellValue(
+              "RESULT: Team (B) ${matchData[0]['team_b_name']} won by ${teamBTotalScore - teamATotalScore} point(s)."));
       cellsToStyle.add(cellToUpdateWinnerTeam);
     }
 
