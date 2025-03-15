@@ -103,7 +103,6 @@ addTeamNamesStyle(sheet, col, row) {
 addPointsTableStyle(sheet, col, row) {
   var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
   var cell = sheet.cell(cellIndex);
-  print(cell);
 
   // Apply border only if the cell exists, preserving its value
   cell.cellStyle = cellStylePointsTable;
