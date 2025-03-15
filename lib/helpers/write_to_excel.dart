@@ -233,7 +233,7 @@ Future<void> readAndWriteExcel(int matchId) async {
         sheet.updateCell(
             symbolCell, xl.TextCellValue(turnTwoData[i]['symbol']));
 
-        if (turnOneData[i]['symbol'] != "-") {
+        if (turnTwoData[i]['symbol'] != "-") {
           cellsToStyle.addAll(
               [defNoCell, atkNoCell, wicketTimeCell, perTimeCell, symbolCell]);
         } else {
