@@ -131,8 +131,8 @@ Future<void> readAndWriteExcel(int matchId) async {
     List<xl.CellIndex> cellsToStyleTurnEnd = [];
     List<xl.CellIndex> cellToStyleIndividualNotOutStyle = [];
     List<xl.CellIndex> cellToStyleTeamNames = [];
-    List<int> TeamATurnScores = [];
-    List<int> TeamBTurnScores = [];
+    List<int> teamATurnScores = [];
+    List<int> teamBTurnScores = [];
 
     // Load the Excel file from assets if it doesn't exist
     if (!await file.exists()) {
@@ -155,9 +155,8 @@ Future<void> readAndWriteExcel(int matchId) async {
     var sheet = excel.tables[excel.tables.keys.first]; // First sheet
 
     // Print existing data
-    print("Existing Data:");
     for (var row in sheet!.rows) {
-      print(row.map((cell) => cell?.value ?? "").join(", "));
+      row.map((cell) => cell?.value ?? "").join(", ");
     }
 
     // Condition 1
@@ -786,7 +785,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
       sheet.updateCell(cellToUpdate, xl.IntCellValue(turnWiseData.length));
 
-      TeamATurnScores.add(turnWiseData.length);
+      teamATurnScores.add(turnWiseData.length);
 
       cellsToStyle.add(cellToUpdate);
       pointTableAtkSideADataColumnIndex++;
@@ -811,7 +810,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
       sheet.updateCell(cellToUpdate, xl.IntCellValue(turnWiseData.length));
 
-      TeamBTurnScores.add(turnWiseData.length);
+      teamBTurnScores.add(turnWiseData.length);
 
       cellsToStyle.add(cellToUpdate);
       pointTableAtkSideBDataColumnIndex++;
@@ -826,7 +825,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
     sheet.updateCell(
         cellToUpdateTotalScoreTeamA,
-        xl.IntCellValue(TeamATurnScores.fold(
+        xl.IntCellValue(teamATurnScores.fold(
             0, (previous, current) => previous + current)));
     cellsToStyle.add(cellToUpdateTotalScoreTeamA);
 
@@ -839,7 +838,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
     sheet.updateCell(
         cellToUpdateTotalScoreTeamB,
-        xl.IntCellValue(TeamBTurnScores.fold(
+        xl.IntCellValue(teamBTurnScores.fold(
             0, (previous, current) => previous + current)));
     cellsToStyle.add(cellToUpdateTotalScoreTeamB);
 
