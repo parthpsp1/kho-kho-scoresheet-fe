@@ -63,3 +63,28 @@ Duration parseTime(String time) {
   int seconds = int.parse(parts[1]);
   return Duration(minutes: minutes, seconds: seconds);
 }
+
+String formatDate(String dateString) {
+  DateTime dateTime = DateTime.parse(dateString);
+  return DateFormat('dd/MM/yyyy').format(dateTime);
+}
+
+String formatTime(String dateString) {
+  DateTime dateTime = DateTime.parse(dateString);
+  return DateFormat('HH:mm:ss').format(dateTime);
+}
+
+String getTimeOfDay(String dateString) {
+  DateTime dateTime = DateTime.parse(dateString);
+  int hour = dateTime.hour;
+
+  if (hour >= 5 && hour < 12) {
+    return "Morning";
+  } else if (hour >= 12 && hour < 17) {
+    return "Afternoon";
+  } else if (hour >= 17 && hour < 21) {
+    return "Evening";
+  } else {
+    return "Night";
+  }
+}

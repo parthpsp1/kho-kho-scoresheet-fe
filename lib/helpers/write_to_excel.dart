@@ -755,6 +755,36 @@ Future<void> readAndWriteExcel(int matchId) async {
       cellsToStyle.add(cellToUpdateWinnerTeam);
     }
 
+    var cellToUpdateTossWinner =
+        xl.CellIndex.indexByColumnRow(columnIndex: 23, rowIndex: 6);
+
+    sheet.updateCell(
+        cellToUpdateTossWinner,
+        xl.TextCellValue(
+            "TOSS WON BY TEAM : ${tossData[0]['toss_winner_team_name']}"));
+    cellToStylePointsTable.add(cellToUpdateTossWinner);
+
+    var cellToUpdateDate =
+        xl.CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 5);
+
+    sheet.updateCell(cellToUpdateDate,
+        xl.TextCellValue("DATE: ${formatDate(matchData[0]['created_at'])}"));
+    cellToStylePointsTable.add(cellToUpdateDate);
+
+    var cellToUpdateTime =
+        xl.CellIndex.indexByColumnRow(columnIndex: 15, rowIndex: 5);
+
+    sheet.updateCell(cellToUpdateTime,
+        xl.TextCellValue("TIME: ${formatTime(matchData[0]['created_at'])}"));
+    cellToStylePointsTable.add(cellToUpdateTime);
+
+    var cellToUpdateDayTime =
+        xl.CellIndex.indexByColumnRow(columnIndex: 31, rowIndex: 5);
+
+    sheet.updateCell(cellToUpdateDayTime,
+        xl.TextCellValue(getTimeOfDay(matchData[0]['created_at'])));
+    cellToStylePointsTable.add(cellToUpdateDayTime);
+
     // Apply borders from Row 47 to Column 40
     var borderStyle = xl.CellStyle(
       bottomBorder: xl.Border(
