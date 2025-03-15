@@ -51,6 +51,23 @@ var cellStyleTeamNames = CellStyle(
       borderColorHex: ExcelColor.fromHexString("000000")),
 );
 
+var cellStylePointsTable = CellStyle(
+  horizontalAlign: HorizontalAlign.Left,
+  verticalAlign: VerticalAlign.Bottom,
+  bottomBorder: Border(
+      borderStyle: BorderStyle.Thin,
+      borderColorHex: ExcelColor.fromHexString("000000")),
+  topBorder: Border(
+      borderStyle: BorderStyle.Thin,
+      borderColorHex: ExcelColor.fromHexString("000000")),
+  leftBorder: Border(
+      borderStyle: BorderStyle.Thin,
+      borderColorHex: ExcelColor.fromHexString("000000")),
+  rightBorder: Border(
+      borderStyle: BorderStyle.Thin,
+      borderColorHex: ExcelColor.fromHexString("000000")),
+);
+
 addDefaultCellStyle(sheet, col, row) {
   var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
   var cell = sheet.cell(cellIndex);
@@ -81,4 +98,13 @@ addTeamNamesStyle(sheet, col, row) {
 
   // Apply border only if the cell exists, preserving its value
   cell.cellStyle = cellStyleTeamNames;
+}
+
+addPointsTableStyle(sheet, col, row) {
+  var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
+  var cell = sheet.cell(cellIndex);
+  print(cell);
+
+  // Apply border only if the cell exists, preserving its value
+  cell.cellStyle = cellStylePointsTable;
 }

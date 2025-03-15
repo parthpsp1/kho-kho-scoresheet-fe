@@ -131,6 +131,7 @@ Future<void> readAndWriteExcel(int matchId) async {
     List<xl.CellIndex> cellsToStyleTurnEnd = [];
     List<xl.CellIndex> cellToStyleIndividualNotOutStyle = [];
     List<xl.CellIndex> cellToStyleTeamNames = [];
+    List<xl.CellIndex> cellToStylePointsTable = [];
     List<int> teamATurnScores = [];
     List<int> teamBTurnScores = [];
 
@@ -787,7 +788,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
       teamATurnScores.add(turnWiseData.length);
 
-      cellsToStyle.add(cellToUpdate);
+      cellToStylePointsTable.add(cellToUpdate);
       pointTableAtkSideADataColumnIndex++;
     }
 
@@ -812,7 +813,7 @@ Future<void> readAndWriteExcel(int matchId) async {
 
       teamBTurnScores.add(turnWiseData.length);
 
-      cellsToStyle.add(cellToUpdate);
+      cellToStylePointsTable.add(cellToUpdate);
       pointTableAtkSideBDataColumnIndex++;
     }
 
@@ -827,7 +828,7 @@ Future<void> readAndWriteExcel(int matchId) async {
         cellToUpdateTotalScoreTeamA,
         xl.IntCellValue(teamATurnScores.fold(
             0, (previous, current) => previous + current)));
-    cellsToStyle.add(cellToUpdateTotalScoreTeamA);
+    cellToStylePointsTable.add(cellToUpdateTotalScoreTeamA);
 
     int teamBTotalScoreColumnIndex = 11;
     int teamBTotalScoreRowIndex = 45;
@@ -840,7 +841,7 @@ Future<void> readAndWriteExcel(int matchId) async {
         cellToUpdateTotalScoreTeamB,
         xl.IntCellValue(teamBTurnScores.fold(
             0, (previous, current) => previous + current)));
-    cellsToStyle.add(cellToUpdateTotalScoreTeamB);
+    cellToStylePointsTable.add(cellToUpdateTotalScoreTeamB);
 
     // Apply borders from Row 47 to Column 40
     var borderStyle = xl.CellStyle(
@@ -877,6 +878,9 @@ Future<void> readAndWriteExcel(int matchId) async {
     }
     for (var cell in cellToStyleIndividualNotOutStyle) {
       addIndividualNotOutCellStyle(sheet, cell.columnIndex, cell.rowIndex);
+    }
+    for (var cell in cellToStylePointsTable) {
+      addPointsTableStyle(sheet, cell.columnIndex, cell.rowIndex);
     }
 
     // Save modified file
