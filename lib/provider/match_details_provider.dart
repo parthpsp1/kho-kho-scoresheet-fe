@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 class MatchDetailsProvider extends ChangeNotifier {
   String teamAName;
   String teamBName;
-  int ageGroup;
-  int tossWinner;
-  int defAtkChoice;
+  String ageGroup;
+  String tossWinner;
+  String sideChoice;
+  Map<String, String> defAttackerMap = {};
+  // Save perTimes i.e. wicket time t2 - t1 wicket times etc.
+  List<Map<String, Duration>> timeData = [];
 
   MatchDetailsProvider({
-    this.ageGroup = 0,
-    this.tossWinner = 0,
-    this.defAtkChoice = 0,
+    this.ageGroup = 'U-14',
+    this.tossWinner = 'A',
+    this.sideChoice = 'DEF',
     this.teamAName = '',
     this.teamBName = '',
   });
@@ -21,25 +24,5 @@ class MatchDetailsProvider extends ChangeNotifier {
 
   void updateTeamBName(String teamBName) {
     this.teamBName = teamBName;
-  }
-
-  void updateAgeGroup(int ageGroup) {
-    this.ageGroup = ageGroup;
-  }
-
-  void updateTossWinner(int tossWinner) {
-    this.tossWinner = tossWinner;
-  }
-
-  void updateDefAtkChoice(int defAtkChoice) {
-    this.defAtkChoice = defAtkChoice;
-  }
-
-  void clearMatchData() {
-    ageGroup = 0;
-    tossWinner = 0;
-    defAtkChoice = 0;
-    teamAName = '';
-    teamBName = '';
   }
 }

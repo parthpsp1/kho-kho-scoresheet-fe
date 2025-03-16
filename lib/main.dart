@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
-import 'package:kho_kho_scoresheet/provider/scoresheet_provider.dart';
 import 'package:kho_kho_scoresheet/screens/start_screen.dart';
+import 'package:kho_kho_scoresheet/secrets.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
-void main() {
+String supabaseUrl = "https://wxtbkzexmxblkleydfdb.supabase.co";
+String supbaseKey = Secrets.supbaseKey;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  WakelockPlus.enable();
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supbaseKey,
+  );
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
         create: (context) => MatchDetailsProvider(),
-        lazy: true,
-      ),
-      ChangeNotifierProvider(
-        create: (context) => ScoresheetProvider(),
         lazy: true,
       ),
     ],
@@ -33,7 +40,7 @@ class KhoKhoScoresheet extends StatelessWidget {
           backgroundColor: Colors.white,
         ),
       ),
-      home: const StartScreen(),
+      home: StartScreen(),
     );
   }
 }
