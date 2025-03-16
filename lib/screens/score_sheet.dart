@@ -230,7 +230,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                           },
                           style: const ButtonStyle(
                             overlayColor: WidgetStatePropertyAll(
-                            overlayColor: WidgetStatePropertyAll(
                                 ColorConstants.primaryOverlayColor),
                           ),
                           child: const Text(
@@ -264,7 +263,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             });
                           },
                           style: const ButtonStyle(
-                            overlayColor: WidgetStatePropertyAll(
                             overlayColor: WidgetStatePropertyAll(
                                 ColorConstants.primaryOverlayColor),
                           ),
@@ -310,8 +308,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                 );
               },
               style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(Colors.red),
-                foregroundColor: WidgetStatePropertyAll(Colors.white),
                 backgroundColor: WidgetStatePropertyAll(Colors.red),
                 foregroundColor: WidgetStatePropertyAll(Colors.white),
               ),
@@ -617,9 +613,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 style: ButtonStyle(
                                   surfaceTintColor:
                                       const WidgetStatePropertyAll(
-                                      const WidgetStatePropertyAll(
                                           Colors.black),
-                                  shape: const WidgetStatePropertyAll(
                                   shape: const WidgetStatePropertyAll(
                                     ContinuousRectangleBorder(
                                       side: BorderSide(
@@ -631,7 +625,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       ),
                                     ),
                                   ),
-                                  padding: const WidgetStatePropertyAll(
                                   padding: const WidgetStatePropertyAll(
                                     EdgeInsets.all(0),
                                   ),
@@ -726,7 +719,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                 };
                                                 Navigator.of(context).pop();
                                                 setState(() {
-                                                  selectedSymbol = -1;
                                                   singleTurnData[turnCount
                                                           .toString()] =
                                                       allRunTimes;
@@ -751,7 +743,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               },
                                               style: const ButtonStyle(
                                                 overlayColor:
-                                                    WidgetStatePropertyAll(
                                                     WidgetStatePropertyAll(
                                                         ColorConstants
                                                             .primaryOverlayColor),
@@ -800,7 +791,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                     );
                                   },
                                   style: const ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
                                     backgroundColor: WidgetStatePropertyAll(
                                       Color.fromRGBO(177, 50, 50, 1),
                                     ),
