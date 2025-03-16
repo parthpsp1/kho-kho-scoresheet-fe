@@ -8,7 +8,6 @@ import 'package:kho_kho_scoresheet/helpers/write_to_excel.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
 import 'package:kho_kho_scoresheet/supabase/db_queries.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ScoreSheet extends StatefulWidget {
   const ScoreSheet({super.key, required this.matchId});
@@ -120,7 +119,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         child: Text(
                           matchDetails.teamAName,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                       TextButton(
@@ -145,7 +144,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         child: Text(
                           matchDetails.teamBName,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
@@ -410,7 +409,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   defenderNumber = value;
                                 });
                               },
-                              hint: Text(
+                              hint: const Text(
                                 "Player No.",
                                 style: TextStyle(
                                   fontSize: 16,
@@ -418,7 +417,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               ),
                               value: defenderNumber,
                               isExpanded: true,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
@@ -440,7 +439,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 : Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
                                     .teamBName,
-                            style: TextStyle(fontStyle: FontStyle.italic),
+                            style: const TextStyle(fontStyle: FontStyle.italic),
                           ),
                         ),
                       ],
@@ -480,7 +479,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       attackerNumber = value;
                                     });
                                   },
-                                  hint: Text(
+                                  hint: const Text(
                                     "Player No.",
                                     style: TextStyle(
                                       fontSize: 16,
@@ -488,7 +487,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   ),
                                   value: attackerNumber,
                                   isExpanded: true,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 26,
                                     fontWeight: FontWeight.bold,
@@ -511,7 +510,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 : Provider.of<MatchDetailsProvider>(context,
                                         listen: false)
                                     .teamBName,
-                            style: TextStyle(fontStyle: FontStyle.italic),
+                            style: const TextStyle(fontStyle: FontStyle.italic),
                           ),
                         ),
                       ],
@@ -679,7 +678,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       builder: (builder) {
                                         return AlertDialog.adaptive(
                                           title: const Text("End Turn?"),
-                                          content: IntrinsicHeight(
+                                          content: const IntrinsicHeight(
                                             child: Text(
                                               "Please confirm end of turn",
                                               style: TextStyle(
@@ -692,7 +691,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              style: ButtonStyle(
+                                              style: const ButtonStyle(
                                                 overlayColor:
                                                     WidgetStatePropertyAll(
                                                   ColorConstants
@@ -835,10 +834,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                 .insertIntoRoundDetails(
                                               turnCount + 1,
                                               widget.matchId,
-                                              toInt(defenderNumber)!,
+                                              defenderNumber!,
                                               matchDetails
                                                   .defAttackerMap["DEF"]!,
-                                              toInt(attackerNumber),
+                                              attackerNumber,
                                               matchDetails
                                                   .defAttackerMap["ATK"],
                                               wicketTime!,
@@ -950,15 +949,15 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       isWicketAdded = true;
                                     });
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.add,
                                     color: Colors.white,
                                   ),
-                                  label: Text(
+                                  label: const Text(
                                     "Add Wicket",
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  style: ButtonStyle(
+                                  style: const ButtonStyle(
                                     backgroundColor: WidgetStatePropertyAll(
                                       Colors.green,
                                     ),
@@ -980,22 +979,22 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                         attackerNumber = null;
                                       });
                                     },
-                                    label: Text(
+                                    label: const Text(
                                       'Cancel Wicket',
                                       style: TextStyle(color: Colors.white),
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.cancel_outlined,
                                       color: Colors.white,
                                     ),
-                                    style: ButtonStyle(
+                                    style: const ButtonStyle(
                                       backgroundColor:
                                           WidgetStatePropertyAll(Colors.red),
                                     ),
                                   ),
                                 ),
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
                     const Text(
                       'Match Score Sheet',
                       style: TextStyle(
