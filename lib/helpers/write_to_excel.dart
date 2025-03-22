@@ -184,8 +184,7 @@ Future<void> readAndWriteExcel(int matchId) async {
           sheet.updateCell(
               atkNoCell, xl.IntCellValue(turnOneData[i]['atk_no']));
         } else {
-          sheet.updateCell(
-              atkNoCell, xl.TextCellValue(turnOneData[i]['symbol']));
+          sheet.updateCell(atkNoCell, xl.TextCellValue("-"));
         }
         sheet.updateCell(
             wicketTimeCell, xl.TextCellValue(turnOneData[i]['wicket_time']));
@@ -223,8 +222,7 @@ Future<void> readAndWriteExcel(int matchId) async {
           sheet.updateCell(
               atkNoCell, xl.IntCellValue(turnTwoData[i]['atk_no']));
         } else {
-          sheet.updateCell(
-              atkNoCell, xl.TextCellValue(turnTwoData[i]['symbol']));
+          sheet.updateCell(atkNoCell, xl.TextCellValue("-"));
         }
         sheet.updateCell(
             wicketTimeCell, xl.TextCellValue(turnTwoData[i]['wicket_time']));
@@ -267,8 +265,7 @@ Future<void> readAndWriteExcel(int matchId) async {
           sheet.updateCell(
               atkNoCell, xl.IntCellValue(turnOneData[i]['atk_no']));
         } else {
-          sheet.updateCell(
-              atkNoCell, xl.TextCellValue(turnOneData[i]['symbol']));
+          sheet.updateCell(atkNoCell, xl.TextCellValue("-"));
         }
         sheet.updateCell(
             wicketTimeCell, xl.TextCellValue(turnOneData[i]['wicket_time']));
@@ -306,8 +303,7 @@ Future<void> readAndWriteExcel(int matchId) async {
           sheet.updateCell(
               atkNoCell, xl.IntCellValue(turnTwoData[i]['atk_no']));
         } else {
-          sheet.updateCell(
-              atkNoCell, xl.TextCellValue(turnTwoData[i]['symbol']));
+          sheet.updateCell(atkNoCell, xl.TextCellValue("-"));
         }
         sheet.updateCell(
             wicketTimeCell, xl.TextCellValue(turnTwoData[i]['wicket_time']));
@@ -378,8 +374,7 @@ Future<void> readAndWriteExcel(int matchId) async {
               sheet.updateCell(
                   atkNoCell, xl.IntCellValue(turnData[i]['atk_no']));
             } else {
-              sheet.updateCell(
-                  atkNoCell, xl.TextCellValue(turnData[i]['symbol']));
+              sheet.updateCell(atkNoCell, xl.TextCellValue("-"));
             }
             sheet.updateCell(
                 wicketTimeCell, xl.TextCellValue(turnData[i]['wicket_time']));
@@ -466,8 +461,7 @@ Future<void> readAndWriteExcel(int matchId) async {
               sheet.updateCell(
                   atkNoCell, xl.IntCellValue(turnData[i]['atk_no']));
             } else {
-              sheet.updateCell(
-                  atkNoCell, xl.TextCellValue(turnData[i]['symbol']));
+              sheet.updateCell(atkNoCell, xl.TextCellValue("-"));
             }
             sheet.updateCell(
                 wicketTimeCell, xl.TextCellValue(turnData[i]['wicket_time']));
