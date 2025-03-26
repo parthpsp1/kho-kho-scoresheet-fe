@@ -23,8 +23,9 @@ String? selectedSymbol;
 String? wicketTime;
 bool isTurnTimEnded = false;
 bool isWicketAdded = false;
-int turnCount = 0;
 bool isMatchStarted = false;
+bool isWicketAddedLoading = false;
+int turnCount = 0;
 
 Map<String, dynamic> singleTurnData = {};
 
@@ -806,7 +807,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       width: 120,
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          if (isMatchStarted == true &&
+                                          if (isWicketAddedLoading == false &&
+                                              isMatchStarted == true &&
                                               selectedSymbol != null &&
                                               wicketTime != '' &&
                                               defenderNumber != null &&
@@ -815,6 +817,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                                               selectedSymbol) &&
                                                       attackerNumber == null) ||
                                                   attackerNumber != null)) {
+                                            isWicketAddedLoading = true;
                                             Map<String, Duration> runTimeEntry =
                                                 {
                                               "run_time": parseTime(wicketTime!)
@@ -850,6 +853,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                               selectedSymbol = null;
                                               wicketTime = null;
                                               isWicketAdded = false;
+                                              isWicketAddedLoading = false;
                                             });
                                             if (context.mounted) {
                                               ScaffoldMessenger.of(context)
@@ -900,7 +904,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                             null;
                                           }
                                         },
-                                        child: const Text('Enter Data'),
+                                        child: isWicketAddedLoading == false
+                                            ? Text('Enter Data')
+                                            : CircularProgressIndicator(
+                                                strokeAlign: -3,
+                                              ),
                                       ),
                                     )
                                   : const SizedBox(

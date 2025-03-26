@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kho_kho_scoresheet/constants/color_constants.dart';
+import 'package:kho_kho_scoresheet/helpers/connectivity.dart';
 import 'package:kho_kho_scoresheet/helpers/permission_handler.dart';
 import 'package:kho_kho_scoresheet/helpers/time_manipulation.dart';
 import 'package:kho_kho_scoresheet/provider/match_details_provider.dart';
@@ -21,6 +22,7 @@ TextEditingController teamBNameController = TextEditingController();
 bool teamANameError = false;
 bool teamBNameError = false;
 bool isLoading = false;
+bool? isConnected = false;
 
 class _StartScreenState extends State<StartScreen> {
   Set<String> ageGroupSelection = {"U-14"}; // Default selection
@@ -31,12 +33,83 @@ class _StartScreenState extends State<StartScreen> {
   void initState() {
     super.initState();
     runRequestPermissions();
+    checkConnectivity(context);
     // To do: check if the loading screen is visible when match is ended
     isLoading = false;
   }
 
   Future<void> runRequestPermissions() async {
     await requestPermissions();
+  }
+
+  Future<void> checkConnectivity(BuildContext context) async {
+    bool isConnected = await checkNetworkConnection(); // Await the future
+
+    if (!isConnected) {
+      showAdaptiveDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog.adaptive(
+            title: const Text("Connectivity Issue"),
+            content: const IntrinsicHeight(
+              child: Text(
+                "The app requires internet to run",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  SystemNavigator.pop();
+                },
+                style: const ButtonStyle(
+                  overlayColor: WidgetStatePropertyAll(
+                    ColorConstants.primaryOverlayColor,
+                  ),
+                ),
+                child: const Text(
+                  "Ok",
+                  style: TextStyle(
+                    color: Color.fromRGBO(17, 27, 47, 1),
+                  ),
+                ),
+              ),
+            ],
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(18),
+              ),
+            ),
+            titlePadding: const EdgeInsets.only(
+              top: 20,
+              left: 20,
+              right: 20,
+            ),
+            titleTextStyle: const TextStyle(
+              color: Color.fromRGBO(17, 47, 27, 1),
+              fontSize: 21,
+              fontWeight: FontWeight.w600,
+            ),
+            contentPadding: const EdgeInsets.only(
+              top: 10,
+              left: 20,
+              right: 20,
+              bottom: 24,
+            ),
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            actionsPadding: const EdgeInsets.only(
+              bottom: 16,
+              left: 20,
+              right: 20,
+              top: 10,
+            ),
+          );
+        },
+      );
+    }
   }
 
   @override
