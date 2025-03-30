@@ -7,14 +7,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 String supabaseUrl = "https://wxtbkzexmxblkleydfdb.supabase.co";
-String supbaseKey = Secrets.supbaseKey;
+String supabaseKey = Secrets.supabaseKey;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WakelockPlus.enable();
   await Supabase.initialize(
     url: supabaseUrl,
-    anonKey: supbaseKey,
+    anonKey: supabaseKey,
   );
   runApp(MultiProvider(
     providers: [
