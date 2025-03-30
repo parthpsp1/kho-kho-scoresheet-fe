@@ -538,30 +538,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.start,
-                          //   children: [
-                          //     // const SizedBox(
-                          //     //   width: 10,
-                          //     // ),
-                          //     // IconButton(
-                          //     //   onPressed: () {
-                          //     //     setState(() {
-                          //     //       wicketTime = '';
-                          //     //     });
-                          //     //   },
-                          //     //   icon: const Icon(
-                          //     //     RemixIcon.close_outline,
-                          //     //     color: Colors.red,
-                          //     //   ),
-                          //     //   style: const ButtonStyle(
-                          //     //     backgroundColor: WidgetStatePropertyAll(
-                          //     //       Colors.white,
-                          //     //     ),
-                          //     //   ),
-                          //     // )
-                          //   ],
-                          // ),
                         ],
                       ),
                     ),

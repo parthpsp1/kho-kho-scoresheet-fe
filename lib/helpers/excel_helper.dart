@@ -1,109 +1,83 @@
 import 'package:excel/excel.dart';
 
-var cellStyle = CellStyle(
+CellStyle createCellStyle({
+  required HorizontalAlign horizontalAlign,
+  required VerticalAlign verticalAlign,
+  required BorderStyle borderStyle,
+  required String borderColorHex,
+}) {
+  return CellStyle(
+    horizontalAlign: horizontalAlign,
+    verticalAlign: verticalAlign,
+    bottomBorder: Border(
+      borderStyle: borderStyle,
+      borderColorHex: ExcelColor.fromHexString(borderColorHex),
+    ),
+    topBorder: Border(
+      borderStyle: borderStyle,
+      borderColorHex: ExcelColor.fromHexString(borderColorHex),
+    ),
+    leftBorder: Border(
+      borderStyle: borderStyle,
+      borderColorHex: ExcelColor.fromHexString(borderColorHex),
+    ),
+    rightBorder: Border(
+      borderStyle: borderStyle,
+      borderColorHex: ExcelColor.fromHexString(borderColorHex),
+    ),
+  );
+}
+
+final cellStyle = createCellStyle(
   horizontalAlign: HorizontalAlign.Center,
   verticalAlign: VerticalAlign.Center,
-  bottomBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  topBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  leftBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  rightBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
+  borderStyle: BorderStyle.Thin,
+  borderColorHex: "000000",
 );
 
-var cellStyleThickBorder = CellStyle(
+final cellStyleThickBorder = createCellStyle(
   horizontalAlign: HorizontalAlign.Center,
   verticalAlign: VerticalAlign.Center,
-  bottomBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  topBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  leftBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  rightBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
+  borderStyle: BorderStyle.Thick,
+  borderColorHex: "000000",
 );
 
-var cellStyleTeamNames = CellStyle(
+final cellStyleTeamNames = createCellStyle(
   horizontalAlign: HorizontalAlign.Left,
   verticalAlign: VerticalAlign.Center,
-  bottomBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  topBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  leftBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  rightBorder: Border(
-      borderStyle: BorderStyle.Thick,
-      borderColorHex: ExcelColor.fromHexString("000000")),
+  borderStyle: BorderStyle.Thick,
+  borderColorHex: "000000",
 );
 
-var cellStylePointsTable = CellStyle(
+final cellStylePointsTable = createCellStyle(
   horizontalAlign: HorizontalAlign.Left,
   verticalAlign: VerticalAlign.Bottom,
-  bottomBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  topBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  leftBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
-  rightBorder: Border(
-      borderStyle: BorderStyle.Thin,
-      borderColorHex: ExcelColor.fromHexString("000000")),
+  borderStyle: BorderStyle.Thin,
+  borderColorHex: "000000",
 );
 
-addDefaultCellStyle(sheet, col, row) {
+void applyCellStyle(Sheet sheet, int col, int row, CellStyle style) {
   var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
   var cell = sheet.cell(cellIndex);
-
-  // Apply border only if the cell exists, preserving its value
-  cell.cellStyle = cellStyle;
+  cell.cellStyle = style;
 }
 
-addThickCellStyle(sheet, col, row) {
-  var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
-  var cell = sheet.cell(cellIndex);
-
-  // Apply border only if the cell exists, preserving its value
-  cell.cellStyle = cellStyleThickBorder;
+void addDefaultCellStyle(Sheet sheet, int col, int row) {
+  applyCellStyle(sheet, col, row, cellStyle);
 }
 
-addIndividualNotOutCellStyle(sheet, col, row) {
-  var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
-  var cell = sheet.cell(cellIndex);
-
-  // Apply border only if the cell exists, preserving its value
-  cell.cellStyle = cellStyleThickBorder;
+void addThickCellStyle(Sheet sheet, int col, int row) {
+  applyCellStyle(sheet, col, row, cellStyleThickBorder);
 }
 
-addTeamNamesStyle(sheet, col, row) {
-  var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
-  var cell = sheet.cell(cellIndex);
-
-  // Apply border only if the cell exists, preserving its value
-  cell.cellStyle = cellStyleTeamNames;
+void addIndividualNotOutCellStyle(Sheet sheet, int col, int row) {
+  applyCellStyle(sheet, col, row, cellStyleThickBorder);
 }
 
-addPointsTableStyle(sheet, col, row) {
-  var cellIndex = CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
-  var cell = sheet.cell(cellIndex);
+void addTeamNamesStyle(Sheet sheet, int col, int row) {
+  applyCellStyle(sheet, col, row, cellStyleTeamNames);
+}
 
-  // Apply border only if the cell exists, preserving its value
-  cell.cellStyle = cellStylePointsTable;
+void addPointsTableStyle(Sheet sheet, int col, int row) {
+  applyCellStyle(sheet, col, row, cellStylePointsTable);
 }
