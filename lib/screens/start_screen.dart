@@ -34,7 +34,6 @@ class _StartScreenState extends State<StartScreen> {
     super.initState();
     runRequestPermissions();
     checkConnectivity(context);
-    // To do: check if the loading screen is visible when match is ended
     isLoading = false;
   }
 
